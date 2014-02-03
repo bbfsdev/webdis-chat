@@ -1,0 +1,82 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <!-- load JQuery -->
+  <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="jquery.ba-bbq.min.js"></script>
+  <script type="text/javascript" src="jquery-ui.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
+  <link rel="stylesheet" type="text/css" href="jquery-ui.css">
+  <!-- Fix $.ajax for IE8,9 -->
+  <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
+  <!-- Application scripts -->
+  <script src="admin_conf.js"></script>
+  <script src="app.js"></script>
+  <script src="langs.js"></script>
+  <script src="chat_app.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
+  <script>
+    function setHtmlItemQ (q) {
+      var item = $('<div>').addClass("itemQ").attr('data-approved', q.approve).attr('data-lang', q.lang).attr('data-id', q.id);
+      var itemName = $('<span>').addClass('nameQ').html(q.name);
+      var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
+      var itemMess = $('<div>').addClass('messageQ').html(q.question);
+      var itemAdminAllow = $('<div>').addClass('adminAllow btn btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
+      var itemAdminDisallow = $('<div>').addClass('adminDisallow btn btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
+      var itemAdminRemove = $('<div>').addClass('adminRemove btn btnRed').html(TRANSLATION[TRANSLATION.lang].remove);
+
+      var itemAdminButton = itemAdminDisallow;
+      if (!q.approve) {
+         itemAdminButton = itemAdminAllow;
+      }
+
+      var itemAdmin = $('<div>').addClass('btns').append(itemAdminButton).append(itemAdminRemove);
+
+      item.append(itemName).append(itemFrom).append(itemMess).append(itemAdmin);
+      $('#questionsList').prepend(item);
+    }
+
+    $(document).ready(function () {
+      $('#questionsList').on('click', '.adminRemove', function () {
+        var item = $(this).parents('.itemQ');
+        deleteQuestion(item.attr('data-id'));
+      });
+      $('#questionsList').on('click', ".adminAllow", function () {
+        var item = $(this).parents('.itemQ');
+        toggleQuestion( item.attr('data-id'), true );
+      });
+      $('#questionsList').on('click', ".adminDisallow", function () {
+        var item = $(this).parents('.itemQ');
+        toggleQuestion( item.attr('data-id'), false);    
+      });
+
+      userCount(function(count) {
+        $('#count').text(count);
+      });
+      setInterval(function() {
+        userCount(function(count) {
+          $('#count').text(count);
+        });
+      }, conf.refresh_count);
+    });
+  </script>
+</head>
+<body dir="ltr">
+  <div id="langSwitch" dir="ltr">
+    <label><input name="lang" type="radio" checked="" value="en">English</label>
+    <label><input name="lang" type="radio" value="es">Español</label>
+    <label><input name="lang" type="radio" value="ru">Русский</label>
+    <label><input name="lang" type="radio" value="he">עברית</label>
+  </div>
+  <div class="btns">
+    <div class="btn " id="exportBtn">***</div>
+  </div>
+  <div class="info">
+    Number of online users: <span id="count"></spae>
+  </div>
+  <div id="questionsList">
+  </div>
+  <div id="dialog" title="Export"></div> 
+</body></html>

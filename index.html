@@ -1,0 +1,42 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <meta name="viewport" content="width=device-width">
+  <!-- load JQuery -->
+  <script type="text/javascript" src="jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="jquery.ba-bbq.js"></script>
+  <script type="text/javascript" src="jquery-url.js"></script>
+  <!-- Fix $.ajax for IE8,9 -->
+  <script type="text/javascript" src="jquery.xdomainrequest.js"></script>
+  <!-- Application scripts -->
+  <script src="conf.js"></script>
+  <script src="app.js"></script>
+  <script src="chat_app.js"></script>
+  <script src="langs.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
+</head>
+<body dir="ltr">
+  <div id="langSwitch" dir="ltr">
+    <label><input name="lang" type="radio" checked="" value="en">English</label>
+    <label><input name="lang" type="radio" value="es">Español</label>
+    <label><input name="lang" type="radio" value="ru">Русский</label>
+    <label><input name="lang" type="radio" value="he">עברית</label>
+  </div>
+  <div class="btns">
+    <div class="btn " id="askBtn">***</div>
+  </div>
+  <form id="askForm">
+    <input type="text" placeholder = "***" id="name" />
+    <input type="text" placeholder = "***" id = "from"/>
+    <textarea placeholder = "***" id="message"></textarea>
+    <div class="btns">
+      <div class="btn sendBtn">***</div>
+      <div class="btn cancelBtn">***</div>
+    </div>
+  </form>
+  <div id="questionsList">
+  </div>
+</body>
+</html>
+
