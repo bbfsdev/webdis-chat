@@ -1,22 +1,52 @@
 // Include app.js for this to work
 
+// All application keys
+KEY_USERS_COUNT = function() { return ["chat", getLabel(), "users", "count"].join(".") ; };
+KEY_USER = function(user_id) { return ["chat", getLabel(), "user", user_id].join(".") ; };
+KEY_SHOULD_UPDATE = function() { return ["chat", getLabel(), "should_update"].join(".") ; };
+KEY_QUESTIONS_COUNT = function() { return ["chat", getLabel(), "questions", "count"].join(".") ; };
+KEY_QUESTION = function(question_id) { return ["chat", getLabel(), "question", question_id].join(".") ; };
+KEY_RESTART = function() { return ["chat", getLabel(), "restart"].join("."); };
+
+function getParameter(name) {
+  var ret = $.url('?' + name);
+  if (!ret) {
+    return ret;
+  }
+  return $('<div/>').html(decodeURIComponent(ret)).text();
+}
+
+var label = null;
+function getLabel() {
+  if (label) {
+    return label;
+  }
+
+  label = getParameter('label');
+  if (!label) {
+    label = conf.host;
+  }
+
+  return label;
+}
+
 function updateUser() {
-  incr("q_users", function(user_id) {
+  incr(KEY_USERS_COUNT(), function(user_id) {
     setInterval(function() {
-      set_key("q_users_" + user_id, "live", function() {}, conf.user_count_timeout);
+      set_key(KEY_USER(user_id), "live", function() {}, conf.user_count_timeout);
     }, conf.user_count_timeout * 1000);
   });
 }
 
 function userCount(callback) {
-  keys("q_users_*", function(users) {
+  keys(KEY_USER("*"), function(users) {
     callback(users.KEYS.length);
   });
 }
 
 var latest_question = "";
 function sholdUpdate(callback) {
-  get_key("should_update", function(res) {
+  get_key(KEY_SHOULD_UPDATE(), function(res) {
     if (latest_question != res) {
       latest_question = res;
       callback(true);
@@ -27,7 +57,7 @@ function sholdUpdate(callback) {
 }
 
 function addQuestion(lang, name, from, question) {
-  incr("questions", function(id) {
+  incr(KEY_QUESTIONS_COUNT(), function(id) {
     get_timestamp(function(time_now) {
       var q = {
         'lang': lang,
@@ -35,7 +65,7 @@ function addQuestion(lang, name, from, question) {
         'from': from,
         'question': question,
         'approve': false,
-        'id': 'question_' + id,
+        'id': KEY_QUESTION(id),
         'timestamp': time_now
       }
       setQuestion(q);
@@ -45,7 +75,7 @@ function addQuestion(lang, name, from, question) {
 
 function setQuestion(q) {
   set_key(q.id, $.param(q));
-  incr("should_update", function(data) {});
+  incr(KEY_SHOULD_UPDATE(), function(data) {});
 }
 
 function read_question(q) {
@@ -64,7 +94,7 @@ function read_question(q) {
 }
 
 function getQuestions(callback) {
-  keys("question_*", function(keys) {
+  keys(KEY_QUESTION("*"), function(keys) {
     mget(keys.KEYS, function(data) {
       var db = [];
       for (var idx in data.MGET) {
@@ -89,7 +119,7 @@ function toggleQuestion(id, approved) {
 
 function deleteQuestion(id) {
   del(id);
-  incr("should_update", function(data) {});
+  incr(KEY_SHOULD_UPDATE(), function(data) {});
 }
 
 function questionEq(a, b, limit) {
@@ -195,7 +225,7 @@ $(document).ready(function () {
   }, conf.interval);
 
   setInterval(function() {
-    get_key("questions_restart", function(res) {
+    get_key(KEY_RESTART(), function(res) {
       debug = $.url('?debug');
       if (res == 'true') {
         location.reload();
