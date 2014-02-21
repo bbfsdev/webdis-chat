@@ -8,7 +8,7 @@ var handle_error = function(err) {
   debug = $.url('?debug');
   if (debug) {
   // Uncomment for debuging XHR (ajax). 
-  //  alert(err);
+    alert(err);
   }
 };
 

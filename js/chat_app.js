@@ -94,7 +94,7 @@ function read_question(q) {
 }
 
 function getQuestions(callback) {
-  keys(KEY_QUESTION("*"), function(keys) {
+  // keys(KEY_QUESTION("*"), function(keys) {
     mget(keys.KEYS, function(data) {
       var db = [];
       for (var idx in data.MGET) {
@@ -106,7 +106,7 @@ function getQuestions(callback) {
       db.sort(function(a,b){return a.timestamp-b.timestamp});
       callback(db);
     });
-  });
+  // });
 }
 
 function toggleQuestion(id, approved) {
@@ -135,7 +135,7 @@ function questionEq(a, b, limit) {
   
   return true;
 }
-
+/*
 function testInterface() {
   alert(TEST_DB.join("\n"));
   addQuestion('a', 'b', 'c', 'd');
@@ -145,7 +145,7 @@ function testInterface() {
   deleteQuestion('a', 'b', 'c', 'd');
   alert(TEST_DB.join("\n"));
 }
-
+*/
 function setHtmlAllQuestions (db) {
   $('#questionsList').html('');
   for (var i = 0; i < db.length; i++) {
@@ -179,6 +179,7 @@ function updateLang(lang){
 
 $(document).ready(function () {
   updateLang();
+  $('.btn').button();
 
   $("[name='lang']").on('change', function() {
     updateLang($('#langSwitch input:checked').val());
@@ -234,4 +235,20 @@ $(document).ready(function () {
   }, conf.reload_interval);
 
   updateUser();
+
+
+
 });
+
+function mget(key, callback) {
+  var data = {};
+      data.MGET = [{"lang":"es","name":"adsf","from":"asdf","question":"asdf","approve":false,"id":"chat.we.kab.tv.question.4","timestamp":1392468500},{"lang":"es","name":"ddd","from":"ddd","question":"ddd","approve":false,"id":"chat.we.kab.tv.question.5","timestamp":1392468525},{"lang":"es","name":"андрей","from":"Питер","question":"Очень тяжело переключиться после семинара снова на фронтальную учебу. Что делать с этим? Должны ли мы быть в состоянии семинара во время учебы?","approve":false,"id":"chat.we.kab.tv.question.6","timestamp":1392516345},{"lang":"es","name":"Группа","from":"Питера","question":"Ощущение конгресса буквально пылает в нас. Мы живём связью между нами, мы дышим единством - это наша жизнь. Мы любим вас, держим вас. Мы все вместе как один зародыш в матке, и Творец присутствует между нами!!!","approve":false,"id":"chat.we.kab.tv.question.7","timestamp":1392569866},{"lang":"es","name":"Oleg","from":"Piter","question":"Что значит неприятие это стыд?","approve":false,"id":"chat.we.kab.tv.question.8","timestamp":1392599149},{"lang":"es","name":"андрей","from":"Питер","question":"Что это за сила \"погонщик ослов\"? В чем она проявляется на нашем уровне? ","approve":false,"id":"chat.we.kab.tv.question.9","timestamp":1392602679},{"lang":"es","name":"Ray","from":"Yashar Kel (Florida)","question":"What is the exact relationship between growth of the embryo and the inversion of the 613 desires(organs) ?","approve":false,"id":"chat.we.kab.tv.question.10","timestamp":1392688103},{"lang":"es","name":"Joseph ","from":"San Francisco ","question":"Is the 30 minutes we study the Zohar the time where we are able to be in the left line and criticize to what extent we are correctly aimed towards the goal?","approve":false,"id":"chat.we.kab.tv.question.11","timestamp":1392690202},{"lang":"es","name":"Joseph","from":"San Francisco ","question":"How are the discernments of vak and gar expressed in katnut as opposed to gadlut?","approve":false,"id":"chat.we.kab.tv.question.12","timestamp":1392775549}];
+    
+  callback(data);
+}
+
+
+function get_key(key, callback) {
+  callback(10);
+}
+
