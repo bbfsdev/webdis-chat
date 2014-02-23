@@ -4,7 +4,8 @@ var conf = {
   'interval': 30000,
   'max_interval': 120000,
   'reload_interval': 60000,
-  'user_count_timeout': 90  // in seconds
+  'user_count_timeout': 90,  // in seconds
+  'userLang': 'en'
 }
 
 
