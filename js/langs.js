@@ -11,7 +11,8 @@ var TRANSLATION = {
     disallow: 'disallow',
     allow: 'allow' ,
     dir: 'ltr',
-    export: 'export'
+    export: 'export',
+    messTitleAdmin: 'Message for moderation',
   },
   es: {
     ask: 'preguntar',
