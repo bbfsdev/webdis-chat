@@ -111,16 +111,37 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     $('.cancelBtn').html(TRANSLATION[TRANSLATION.lang].cancel);
 });*/
 
-PLUGINS.setLang = (function(lang, place){
+PLUGINS.setLang = (function(lang){
     TRANSLATION.lang = lang || TRANSLATION.lang;
-    var list = $('[date-translation]');
-    list.each(function(el, i){
-      var transl = TRANSLATION[el.attr('date-translation')];
-      var attr = $(this).attr('date-translation-place');
-      if (typeof attr !== 'undefined' && attr !== false) {
-        el.attr(attr, transl);
+    var list = $('[data-tr]');
+    list.each(function(i, el){
+      $el = $(el);
+      var transl = TRANSLATION[TRANSLATION.lang][$el.attr('data-tr')];
+      var forTag = $el.attr("data-tr-place-tag");
+      var forAttr = $el.attr('data-tr-place-attr');
+
+      if (typeof forAttr !== 'undefined' && forAttr !== false) {
+        $el.attr(forAttr, transl);
+        return;
+      } else if (typeof forTag !== 'undefined' && forTag !== false) {
+        var testLength = $el.has(forTag);
+        if (testLength.length !== 0 ) {
+          $el.find(forTag).html(transl);
+        } else {
+          $el.html(transl);
+        };
+        return;
       } else {
-        el.html(transl);
+        $el.html(transl);        
       }
     });
+});
+
+PLUGINS.afterAll = (function(fn){
+  
+  setTimeout(function () {
+    setTimeout(function(){
+      fn();  
+    }, 0);  
+  }, 0);
 });

@@ -22,4 +22,4 @@ return {
   'user_count_timeout': 30, // in seconds
   'refresh_count': 30000
 };
-})();
+});

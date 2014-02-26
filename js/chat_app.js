@@ -42,8 +42,8 @@ var sholdUpdate = function (callback) {
 var updateUser = function () {
   incr(KEY_USERS_COUNT(), function(user_id) {
     setInterval(function() {
-      set_key(KEY_USER(user_id), "live", function() {}, conf.user_count_timeout);
-    }, conf.user_count_timeout * 1000);
+      set_key(KEY_USER(user_id), "live", function() {}, conf().user_count_timeout);
+    }, conf().user_count_timeout * 1000);
   });
 }
 
@@ -122,7 +122,7 @@ function getLabel() {
 
   label = getParameter('label');
   if (!label) {
-    label = conf.host;
+    label = conf().host;
   }
 
   return label;
@@ -203,11 +203,13 @@ function questionEq(a, b, limit) {
 $(document).ready(function () {
   initUserPage();
   startIntervals();
+  PLUGINS.afterAll(initUserLang);
 });
 
 
+
+
 function initUserPage() {
-  initUserLang();
   PLUGINS.setLang();
   updateUser();
   $('.btn').button();//use jquery UI buttons
@@ -232,7 +234,7 @@ function startIntervals() {
         getQuestions(PLUGINS.setHtmlAllQuestions);
       }
     });
-  }, conf.interval);
+  }, conf().interval);
   if (debug_mode) return;
   // Loads new version of chat (new code) if needed.
   setInterval(function() {
@@ -241,5 +243,5 @@ function startIntervals() {
         location.reload();
       }
     });
-  }, conf.reload_interval);
+  }, conf().reload_interval);
 }

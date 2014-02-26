@@ -14,7 +14,7 @@
   
   <!-- Application scripts -->
   <script src="./js/langs.js"></script>
-  <script src="./js/admin_conf.js"></script>
+  <script src="./js/conf.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/chat_app.js"></script>
   <script src="./js/plugins.js"></script>
@@ -23,15 +23,15 @@
 </head>
 <body dir="ltr">
   <div class="btns">
-    <button class="btn " id="askBtn">***</button>
+    <button class="btn " id="askBtn" data-tr="askBtn" data-tr-place-tag="span">***</button>
   </div>
   <form id="askForm">
-    <input type="text" placeholder = "***" id="name" class="ui-widget ui-corner-all ui-button-text-only" />
-    <input type="text" placeholder = "***" id = "from" class="ui-widget ui-corner-all ui-button-text-only"/>
-    <textarea placeholder = "***" id="message" class="ui-widget ui-corner-all ui-button-text-only"></textarea>
+    <input type="text" placeholder = "***" id="name" class="ui-widget ui-corner-all ui-button-text-only"  data-tr="nameInput" data-tr-place-attr="value" />
+    <input type="text" placeholder = "***" id = "from" class="ui-widget ui-corner-all ui-button-text-only" data-tr="fromInput" data-tr-place-attr="value"/>
+    <textarea placeholder = "***" id="message" class="ui-widget ui-corner-all ui-button-text-only" data-tr="messageInput" data-tr-place-attr="value"></textarea>
     <div class="btns">
-      <button class="btn sendBtn">***</button>
-      <button class="btn cancelBtn">***</button>
+      <button class="btn sendBtn" data-tr="sendBtn" data-tr-place-tag="span">***</button>
+      <button class="btn cancelBtn" data-tr="cancelBtn" data-tr-place-tag="span">***</button>
     </div>
   </form>
   <div id="questionsList">
