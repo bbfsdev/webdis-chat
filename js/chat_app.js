@@ -62,11 +62,15 @@ var debug_mode = true;
 var ISADMIN = false;
 if (debug_mode) {
   getQuestions = function(callback) {
+    var allSmiles;
+    $.each(EMOTIONS, function (i, val) {
+      allSmiles += i;
+    });
     var data = [{
         'lang': TRANSLATION.lang,
         'name': 'name',
         'from': 'from',
-        'question': 'question',
+        'question': 'this is a simple test' + allSmiles,
         'approve': true,
         'id': 1,
         'timestamp': function () {
@@ -76,7 +80,7 @@ if (debug_mode) {
         'lang': TRANSLATION.lang,
         'name': 'name',
         'from': 'from',
-        'question': 'question',
+        'question': 'test',
         'approve': false,
         'id': 1,
         'timestamp': function () {
@@ -199,33 +203,6 @@ function questionEq(a, b, limit) {
 }
 
 
-
-$(document).ready(function () {
-  initUserPage();
-  startIntervals();
-  PLUGINS.afterAll(initUserLang);
-});
-
-
-
-
-function initUserPage() {
-  PLUGINS.setLang();
-  updateUser();
-  $('.btn').button();//use jquery UI buttons
-
-  PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
-  PLUGINS.initExportBtn($('#exportBtn'));
-  
-  getQuestions(PLUGINS.setHtmlAllQuestions);
-};
-
-function initUserLang () {
-  var lang = getParameter('lang');
-  TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
-  
-}
-
 function startIntervals() {    
   // Updates questions list.
   setInterval(function () {
@@ -244,4 +221,36 @@ function startIntervals() {
       }
     });
   }, conf().reload_interval);
+}
+
+
+$(document).ready(function () {
+   if(ISADMIN) {
+    initAdminPage();
+  } else {
+    initUserPage();
+  }
+  //startIntervals();
+  PLUGINS.afterAll(initUserLang);
+});
+
+
+
+
+function initUserPage() {
+  PLUGINS.setLang();
+  updateUser();
+  $('.btn').button();//use jquery UI buttons
+  if(ISADMIN) {
+
+  } else {
+    PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
+    getQuestions(PLUGINS.setHtmlAllQuestions);
+  }
+};
+
+function initUserLang () {
+  var lang = getParameter('lang');
+  TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
+  
 }

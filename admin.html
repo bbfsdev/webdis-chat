@@ -14,10 +14,11 @@
   
   <!-- Application scripts -->
   <script src="./js/langs.js"></script>
-  <script src="./js/adminjs.js"></script>
+  <script src="./js/emoticons.js"></script>
   <script src="./js/conf.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/chat_app.js"></script>
+  <script src="./js/adminjs.js"></script>
   <script src="./js/plugins.js"></script>
   
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -27,14 +28,12 @@
 <body dir="ltr">
   <div class="sidebar">
     <div class="btns">
-      <div class="btn " id="exportBtn">***</div>
-    </div>
-    <div class="info">
-      Number of online users: <span id="count"></spae>
+      <button class="btn " id="exportBtn" data-tr="exportBtn" data-tr-place-tag="span">***</button>
     </div>
   </div>
   <div class="content">
-    <h3 data-translate="messTitleAdmin">***</h3>
+    <h3 data-tr="messTitleAdmin">***</h3>
+    <div class="info">Number of online users: <span id="count"></span></div>
     <div id="questionsList"></div>
   </div>
   <div id="dialog" title="Export"></div> 
