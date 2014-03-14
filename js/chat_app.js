@@ -29,7 +29,7 @@ var getQuestions = function(callback) {
 
 var latest_question = "";
 var sholdUpdate = function (callback) {
-  get_Ikey(KEY_SHOULD_UPDATE(), function(res) {
+  get_key(KEY_SHOULD_UPDATE(), function(res) {
     if (latest_question != res) {
       latest_question = res;
       callback(true);
@@ -58,7 +58,7 @@ var updatePollWidget = function() {
 };
 
 // START of Debug mode
-var debug_mode = true;
+var debug_mode = false;
 if (debug_mode) {
   getQuestions = function(callback) {
     var data = [{
