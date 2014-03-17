@@ -42,8 +42,8 @@ var sholdUpdate = function (callback) {
 var updateUser = function () {
   incr(KEY_USERS_COUNT(), function(user_id) {
     setInterval(function() {
-      set_key(KEY_USER(user_id), "live", function() {}, conf.user_count_timeout);
-    }, conf.user_count_timeout * 1000);
+      set_key(KEY_USER(user_id), "live", function() {}, conf().user_count_timeout);
+    }, conf().user_count_timeout * 1000);
   });
 }
 
@@ -59,13 +59,18 @@ var updatePollWidget = function() {
 
 // START of Debug mode
 var debug_mode = false;
+var ISADMIN = false;
 if (debug_mode) {
   getQuestions = function(callback) {
+    var allSmiles;
+    $.each(EMOTIONS, function (i, val) {
+      allSmiles += i;
+    });
     var data = [{
         'lang': TRANSLATION.lang,
         'name': 'name',
         'from': 'from',
-        'question': 'question',
+        'question': 'this is a simple test' + allSmiles,
         'approve': true,
         'id': 1,
         'timestamp': function () {
@@ -75,7 +80,7 @@ if (debug_mode) {
         'lang': TRANSLATION.lang,
         'name': 'name',
         'from': 'from',
-        'question': 'question',
+        'question': 'test',
         'approve': false,
         'id': 1,
         'timestamp': function () {
@@ -121,7 +126,7 @@ function getLabel() {
 
   label = getParameter('label');
   if (!label) {
-    label = conf.host;
+    label = conf().host;
   }
 
   return label;
@@ -197,32 +202,6 @@ function questionEq(a, b, limit) {
   return true;
 }
 
-
-
-$(document).ready(function () {
-  initUserPage();
-  startIntervals();
-});
-
-
-function initUserPage() {
-  initUserLang();
-  PLUGINS.setLang();
-  updateUser();
-  $('.btn').button();//use jquery UI buttons
-
-  PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
-  PLUGINS.initExportBtn($('#exportBtn'));
-  
-  getQuestions(PLUGINS.setHtmlAllQuestions);
-};
-
-function initUserLang () {
-  var lang = getParameter('lang');
-  TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
-  
-}
-
 function startIntervals() {    
   // Updates questions list.
   setInterval(function () {
@@ -231,8 +210,8 @@ function startIntervals() {
         getQuestions(PLUGINS.setHtmlAllQuestions);
       }
     });
-  }, conf.interval);
-  if (debug_mode) return;
+  }, conf().interval);
+
   // Loads new version of chat (new code) if needed.
   setInterval(function() {
     get_key(KEY_RESTART(), function(res) {
@@ -240,5 +219,34 @@ function startIntervals() {
         location.reload();
       }
     });
-  }, conf.reload_interval);
+  }, conf().reload_interval);
+}
+
+
+$(document).ready(function () {
+   if(ISADMIN) {
+    initAdminPage();
+  } else {
+    initUserPage();
+  }
+  startIntervals();
+  PLUGINS.afterAll(initUserLang);
+});
+
+
+function initUserPage() {
+  PLUGINS.setLang();
+  updateUser();
+  $('.btn').button();  //use jquery UI buttons
+  if(ISADMIN) {
+
+  } else {
+    PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
+    getQuestions(PLUGINS.setHtmlAllQuestions);
+  }
+};
+
+function initUserLang () {
+  var lang = getParameter('lang');
+  TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
 }

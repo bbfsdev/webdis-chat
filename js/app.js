@@ -15,7 +15,7 @@ var handle_error = function(err) {
 function incr(key, callback) {
   $.ajax({
     cache: false,
-    url: location.protocol + "//" + conf.webdis + "/INCR/" + encodeURIComponent(key),
+    url: location.protocol + "//" + conf().webdis + "/INCR/" + encodeURIComponent(key),
     timeout: 8000,
     data: "format=json",
     dataType: "json",
@@ -27,7 +27,7 @@ function incr(key, callback) {
 function get_key(key, callback) {
   $.ajax({
     cache: false,
-    url: location.protocol + "//" + conf.webdis + "/GET/" + encodeURIComponent(key),
+    url: location.protocol + "//" + conf().webdis + "/GET/" + encodeURIComponent(key),
     timeout: 8000,
     data: "format=json",
     dataType: "json",
@@ -41,7 +41,7 @@ function set_key(key, value, callback, expire) {
   if (expire) {
     expire_url = "/EX/" + expire;
   }
-  var set_request = location.protocol + "//" + conf.webdis + "/SET/" + encodeURIComponent(key) + "/" + encodeURIComponent(value) + expire_url;
+  var set_request = location.protocol + "//" + conf().webdis + "/SET/" + encodeURIComponent(key) + "/" + encodeURIComponent(value) + expire_url;
   $.ajax({
     cache: false,
     url: set_request,
@@ -56,7 +56,7 @@ function set_key(key, value, callback, expire) {
 function keys(pattern, callback) {
   $.ajax({
     cache: false,
-    url: location.protocol + "//" + conf.webdis + "/KEYS/" + encodeURIComponent(pattern),
+    url: location.protocol + "//" + conf().webdis + "/KEYS/" + encodeURIComponent(pattern),
     timeout: 8000,
     dataType: "text",
     success: function(data) { callback($.parseJSON(data)); },
@@ -67,7 +67,7 @@ function keys(pattern, callback) {
 function mget(key_arr, callback) {
   // TODO(kolman): Add encode URI Component for all other $.ajax calls!
   // Check, this may be needed for IE only?
-  var url = location.protocol + "//" + conf.webdis + "/MGET/" + encodeURIComponent(key_arr.join("/"));
+  var url = location.protocol + "//" + conf().webdis + "/MGET/" + encodeURIComponent(key_arr.join("/"));
   if (url.length > 2000 && key_arr.length > 2) {
     var first = key_arr.slice(0, key_arr.length/2);
     mget(first, function(first_data) {
@@ -90,7 +90,7 @@ function mget(key_arr, callback) {
 }
 
 function del(key, callback) {
-  var url = location.protocol + "//" + conf.webdis + "/DEL/" + encodeURIComponent(key);
+  var url = location.protocol + "//" + conf().webdis + "/DEL/" + encodeURIComponent(key);
   $.ajax({
     cache: false,
     url: url, 
@@ -105,7 +105,7 @@ function del(key, callback) {
 function get_timestamp(callback) {
   $.ajax({
     cache: false,
-    url: location.protocol + "//" + conf.webdis + "/TIME",
+    url: location.protocol + "//" + conf().webdis + "/TIME",
     timeout: 8000,
     data: "format=json",
     dataType: "json",
