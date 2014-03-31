@@ -8,6 +8,7 @@ KEY_SHOULD_UPDATE = function() { return ["chat", getLabel(), "should_update"].jo
 KEY_QUESTIONS_COUNT = function() { return ["chat", getLabel(), "questions", "count"].join(".") ; };
 KEY_QUESTION = function(question_id) { return ["chat", getLabel(), "question", question_id].join(".") ; };
 KEY_RESTART = function() { return ["chat", getLabel(), "restart"].join("."); };
+KEY_AUTO_APPROVE = function() { return ["chat", getLabel(), "auto", "approve"].join("."); };
 
 
 // Interface methods
@@ -141,16 +142,22 @@ function userCount(callback) {
 function addQuestion(name, from, question) {
   incr(KEY_QUESTIONS_COUNT(), function(id) {
     get_timestamp(function(time_now) {
-      var q = {
-        'lang': TRANSLATION.lang,
-        'name': name,
-        'from': from,
-        'question': question,
-        'approve': false,
-        'id': KEY_QUESTION(id),
-        'timestamp': time_now
-      }
-      setQuestion(q);
+      get_key(KEY_AUTO_APPROVE(), function(auto_approve) {
+        var approve = false;
+        if (auto_approve == "true") {
+          approve = true;
+        }
+        var q = {
+          'lang': TRANSLATION.lang,
+          'name': name,
+          'from': from,
+          'question': question,
+          'approve': approve,
+          'id': KEY_QUESTION(id),
+          'timestamp': time_now
+        }
+        setQuestion(q);
+      });
     });
   });
 }
@@ -224,13 +231,13 @@ function startIntervals() {
 
 
 $(document).ready(function () {
-   if(ISADMIN) {
+  initLang();
+  if(ISADMIN) {
     initAdminPage();
   } else {
     initUserPage();
   }
   startIntervals();
-  PLUGINS.afterAll(initUserLang);
 });
 
 
@@ -239,14 +246,13 @@ function initUserPage() {
   updateUser();
   $('.btn').button();  //use jquery UI buttons
   if(ISADMIN) {
-
   } else {
     PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
     getQuestions(PLUGINS.setHtmlAllQuestions);
   }
 };
 
-function initUserLang () {
+function initLang () {
   var lang = getParameter('lang');
   TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
 }

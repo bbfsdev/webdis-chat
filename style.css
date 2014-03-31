@@ -3,7 +3,7 @@
 .toR{float: right;}
 .toL{float: left;}
 
-.itemQ{border-bottom: 1px solid #555; padding: 5px 10px;}
+.itemQ{border-bottom: 1px solid #555; padding: 5px 10px;min-height: 30px;}
 .itemQ:nth-child(odd){background-color: #ffeed2;}
 .nameQ{color: #d0563c;}
 .timeQ{padding: 0 5px; font-style: italic; font-size: smaller;}
@@ -39,6 +39,9 @@
 /*Admin page*/
 .sidebar{width: 39%; float: right;}
 .content{width: 60%;}
+
+#inputForAutoApproveBtn.ui-state-active { background: #6fff36; } 
+#inputForAutoApproveBtn { background: #ff3a56; } 
 
 /*smiles*/
 .emoticon{background: url(./images/smiles.gif) 0 0 no-repeat; line-height: 0;font-size: 0;padding: 10px; display: inline-block;}

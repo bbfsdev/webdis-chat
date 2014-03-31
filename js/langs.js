@@ -12,7 +12,8 @@ var TRANSLATION = {
     allow: 'allow' ,
     dir: 'ltr',
     exportBtn: 'export',
-    messTitleAdmin: 'Message for moderation',
+    autoApproveBtn: 'auto approve',
+    messTitleAdmin: 'Moderation',
   },
   es: {
     askBtn: 'preguntar',
@@ -33,12 +34,14 @@ var TRANSLATION = {
     fromInput: 'Город',
     messageInput: 'Ваше сообщение',
     sendBtn: 'Послать',
-    cancelBtn: 'Отчистить',
+    cancelBtn: 'Отменить',
     removeBtn: 'удалить',
     disallow: 'отказать',
     allow: 'одобрить',
     dir: 'ltr',
-    exportBtn: 'export'
+    exportBtn: 'export',
+    autoApproveBtn: 'auto approve',
+    messTitleAdmin: 'Модерация',
   },
   he: {
     askBtn: 'לשאול',

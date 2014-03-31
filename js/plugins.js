@@ -25,20 +25,71 @@ PLUGINS.initAskForm = (function($btnObj, $formObj){
 });
 
 
-PLUGINS.initExportBtn = (function($exportBtn){
-    $exportBtn.on('click', function() {
-      getQuestions(function(db) {
-        var output = "";
-        for (var idx in db) {
-          output += db[idx].name + '@' + db[idx].location + ' ' + db[idx].question + '<br>';
-        }
-        $("#dialog").html(output);
-        $("#dialog").dialog();
-      });
-    });
+PLUGINS.initAutoApproveBtn = (function($autoApproveBtn){
+  var toggleAutoApproveBtn = function(autoApprove) {
+    var auto = false;
+    if (autoApprove == 'true') {
+      auto = true;
+    }
+    return auto; 
+  };
 
+  // Initialize button color
+  get_key(KEY_AUTO_APPROVE(), function(autoApprove) {
+    var auto = toggleAutoApproveBtn(autoApprove);
+    $autoApproveBtn.attr('checked', auto);
+    $autoApproveBtn.button( "refresh" );
+  });
+
+  // Set toggle functionality
+  $autoApproveBtn.on('click', function() {
+    get_key(KEY_AUTO_APPROVE(), function(autoApprove) {
+      set_key(KEY_AUTO_APPROVE(), !toggleAutoApproveBtn(autoApprove));
+    });
+  });
+});
+
+
+function padOneZero(num) {
+  var ret = num.toString();
+  if (num < 10) {
+    ret = '0' + num;
   }
-);
+  return ret;
+}
+
+function timeFormat (date){
+  var d = new Date(date*1000);
+  var theString = d.getHours() + ':' + padOneZero(d.getMinutes()) + ':' + padOneZero(d.getSeconds());
+  return theString;
+}
+
+PLUGINS.initExportBtn = (function($exportBtn){
+  $exportBtn.on('click', function() {
+    getQuestions(function(db) {
+      var headers = ['lang', 'name', 'from', 'question', 'approve', 'id', 'timestamp']; 
+      var output = headers.join('\t') + "<br>";
+      for (var idx in db) {
+        var question = db[idx];
+        for (var jdx in headers) {
+          alert(question[headers[jdx]]);
+          if (headers[jdx] in question && question[headers[jdx]] != "") {
+            if (headers[jdx] == "timestamp") {
+              output += timeFormat(question[headers[jdx]]) + '\t';
+            } else {
+              output += question[headers[jdx]].toString() + '\t';
+            }
+          } else {
+            output += "-\t";
+          } 
+        }
+        output += '<br>';
+      }
+      $("#dialog").html(output);
+      $("#dialog").dialog({ width:'auto' });
+    });
+  });
+});
 
 
 PLUGINS.setHtmlAllQuestions = (function(data){
@@ -58,7 +109,7 @@ PLUGINS.setHtmlAllQuestions = (function(data){
       var item = $('<div>').addClass("itemQ").attr('data-approved', q.approve).attr('data-lang', q.lang).attr('data-id', q.id);
       var itemName = $('<span>').addClass('nameQ').html(q.name);
       var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
-      var itemTime = $('<span>').addClass('timeQ').html(timeFormate(q.timestamp));
+      var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
       var itemMess = $('<div>').addClass('messageQ').html(PLUGINS.emoticons(q.question));
       var itemAdminAllow = $('<butto>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
       var itemAdminDisallow = $('<div>').addClass('adminDisallow btnSmall btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
@@ -80,20 +131,14 @@ PLUGINS.setHtmlAllQuestions = (function(data){
       var item = $('<div>').addClass("itemQ");
       var itemName = $('<span>').addClass('nameQ').html(q.name);
       var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
-      var itemTime = $('<span>').addClass('timeQ').html(timeFormate(q.timestamp));
+      var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
       var itemMess = $('<div>').addClass('messageQ').html(PLUGINS.emoticons(q.question));
 
       item.append(itemName).append(itemFrom).append(itemTime).append(itemMess);
       $('#questionsList').prepend(item);
     }
   }
-
-  function timeFormate (date){
-    var d = new Date(date);
-    var month = (d.getMonth() < 9) ? '0'+(d.getMonth() + 1): d.getMonth() + 1;
-    var theString = d.getDate() + '.' + month + '.' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-    return theString;
-  }
+ 
 });
 
 
@@ -130,18 +175,9 @@ PLUGINS.setLang = (function(lang){
     });
 });
 
-PLUGINS.afterAll = (function(fn){
-  
-  setTimeout(function () {
-    setTimeout(function(){
-      fn();  
-    }, 0);  
-  }, 0);
-});
-
 PLUGINS.emoticons =(function(text) {
   var url = "./images/icons/", patterns = [],
-     metachars = /[[\]{}()*+?.\\|^$\-,&#\s]/g;
+    metachars = /[[\]{}()*+?.\\|^$\-,&#\s]/g;
 
   // build a regex pattern for each defined property
   for (var i in EMOTIONS) {
