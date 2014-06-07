@@ -68,7 +68,7 @@ function mget(key_arr, callback) {
   // TODO(kolman): Add encode URI Component for all other $.ajax calls!
   // Check, this may be needed for IE only?
   var url = location.protocol + "//" + conf().webdis + "/MGET/" + encodeURIComponent(key_arr.join("/"));
-  if (url.length > 2000 && key_arr.length > 2) {
+  if (url.length > 2000 && key_arr.length >= 2) {
     var first = key_arr.slice(0, key_arr.length/2);
     mget(first, function(first_data) {
       var second = key_arr.slice(key_arr.length/2, key_arr.length);
@@ -85,6 +85,34 @@ function mget(key_arr, callback) {
       dataType: "text",
       success: function(data) { callback($.parseJSON(data)); },
       error: function(xhr, status, errorThrown) { handle_error('mget\n' + errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+    });
+  }
+}
+
+function del_keys(keys, callback) {
+  var keys_params = [];
+  for (var idx in keys) {
+    keys_params.push(encodeURIComponent(keys[idx]));
+  }
+  var url = location.protocol + "//" + conf().webdis + "/DEL/" + keys_params.join("/");
+  if (url.length > 2000 && keys.length >= 2) {
+    var first = keys.slice(0, keys.length/2);
+    del_keys(first, function(first_data) {
+      var second = keys.slice(keys.length/2, keys.length);
+      del_keys(second, function(data) {
+        data.DEL += first_data.DEL;
+        callback(data);
+      });
+    });
+  } else {
+    $.ajax({
+      cache: false,
+      url: url, 
+      timeout: 8000,
+      data: "format=json",
+      dataType: "text",
+      success: function(data) { callback($.parseJSON(data)); },
+      error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
     });
   }
 }

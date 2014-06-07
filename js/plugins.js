@@ -24,6 +24,22 @@ PLUGINS.initAskForm = (function($btnObj, $formObj){
   });
 });
 
+PLUGINS.initHelpBtn = (function($helpBtn) {
+  $helpBtn.on('click', function() {
+    var dialog_html = "";
+    for (var emo in definition) {
+      var title = definition[emo]['title'];
+      var codes = definition[emo]['codes'];
+      dialog_html += "<span class='helpSmilies'>" + codes[0] + "</span>:" + title + " " + codes + "<br>";
+    }
+    $("#helpDialog").html(dialog_html);
+    $('.helpSmilies').each(function() {
+      $(this).addClass('comment').html(PLUGINS.emoticons($(this).html()));
+    });
+    $("#helpDialog").dialog({ width:'auto' });
+  });
+});
+
 
 PLUGINS.initAutoApproveBtn = (function($autoApproveBtn){
   var toggleAutoApproveBtn = function(autoApprove) {
@@ -64,6 +80,14 @@ function timeFormat (date){
   return theString;
 }
 
+PLUGINS.initDeleteBtn = (function($deleteBtn) {
+  $deleteBtn.on('click', function() {
+    if (confirm("Are you sure?")) {
+      deleteAllQuestions();
+    }
+  });
+});
+
 PLUGINS.initExportBtn = (function($exportBtn){
   $exportBtn.on('click', function() {
     getQuestions(function(db) {
@@ -72,7 +96,6 @@ PLUGINS.initExportBtn = (function($exportBtn){
       for (var idx in db) {
         var question = db[idx];
         for (var jdx in headers) {
-          alert(question[headers[jdx]]);
           if (headers[jdx] in question && question[headers[jdx]] != "") {
             if (headers[jdx] == "timestamp") {
               output += timeFormat(question[headers[jdx]]) + '\t';
@@ -103,28 +126,28 @@ PLUGINS.setHtmlAllQuestions = (function(data){
       }
     };
   }
-  setHtmlAllQuestions (data);
+  setHtmlAllQuestions(data);
 
-    function setHtmlItemQAdmin (q) {
-      var item = $('<div>').addClass("itemQ").attr('data-approved', q.approve).attr('data-lang', q.lang).attr('data-id', q.id);
-      var itemName = $('<span>').addClass('nameQ').html(q.name);
-      var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
-      var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
-      var itemMess = $('<div>').addClass('messageQ').html(PLUGINS.emoticons(q.question));
-      var itemAdminAllow = $('<butto>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
-      var itemAdminDisallow = $('<div>').addClass('adminDisallow btnSmall btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
-      var itemAdminRemove = $('<div>').addClass('adminRemove btnSmall btnRed').html(TRANSLATION[TRANSLATION.lang].removeBtn);
+  function setHtmlItemQAdmin (q) {
+    var item = $('<div>').addClass("itemQ").attr('data-approved', q.approve).attr('data-lang', q.lang).attr('data-id', q.id);
+    var itemName = $('<span>').addClass('nameQ').html(q.name);
+    var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
+    var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
+    var itemMess = $('<div>').addClass('messageQ').addClass('comment').html(PLUGINS.emoticons(q.question));
+    var itemAdminAllow = $('<butto>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
+    var itemAdminDisallow = $('<div>').addClass('adminDisallow btnSmall btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
+    var itemAdminRemove = $('<div>').addClass('adminRemove btnSmall btnRed').html(TRANSLATION[TRANSLATION.lang].removeBtn);
 
-      var itemAdminButton = itemAdminDisallow;
-      if (!q.approve) {
+    var itemAdminButton = itemAdminDisallow;
+    if (!q.approve) {
       itemAdminButton = itemAdminAllow;
-      }
-
-      var itemAdmin = $('<div>').addClass('btns toR').append(itemAdminButton).append(itemAdminRemove);
-
-      item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
-      $('#questionsList').prepend(item);
     }
+
+    var itemAdmin = $('<div>').addClass('btns toR').append(itemAdminButton).append(itemAdminRemove);
+
+    item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
+    $('#questionsList').prepend(item);
+  }
 
   function setHtmlItemQ (q) {
     if (q.approve) {
@@ -155,6 +178,9 @@ PLUGINS.setLang = (function(lang){
     list.each(function(i, el){
       $el = $(el);
       var transl = TRANSLATION[TRANSLATION.lang][$el.attr('data-tr')];
+      if (!transl) {
+        transl = TRANSLATION[TRANSLATION.fallback_lang][$el.attr('data-tr')];
+      }
       var forTag = $el.attr("data-tr-place-tag");
       var forAttr = $el.attr('data-tr-place-attr');
 
@@ -175,22 +201,11 @@ PLUGINS.setLang = (function(lang){
     });
 });
 
+// Emocions support.
+var definition = {smile:{title:"Smile",codes:[":)",":=)",":-)"]},"sad-smile":{title:"Sad Smile",codes:[":(",":=(",":-("]},"big-smile":{title:"Big Smile",codes:[":D",":=D",":-D",":d",":=d",":-d"]},cool:{title:"Cool",codes:["8)","8=)","8-)","B)","B=)","B-)","(cool)"]},wink:{title:"Wink",codes:[":o",":=o",":-o",":O",":=O",":-O"]},crying:{title:"Crying",codes:[";(",";-(",";=("]},sweating:{title:"Sweating",codes:["(sweat)","(:|"]},speechless:{title:"Speechless",codes:[":|",":=|",":-|"]},kiss:{title:"Kiss",codes:[":*",":=*",":-*"]},"tongue-out":{title:"Tongue Out",codes:[":P",":=P",":-P",":p",":=p",":-p"]},blush:{title:"Blush",codes:["(blush)",":$",":-$",":=$",':">']},wondering:{title:"Wondering",codes:[":^)"]},sleepy:{title:"Sleepy",codes:["|-)","I-)","I=)","(snooze)"]},dull:{title:"Dull",codes:["|(","|-(","|=("]},"in-love":{title:"In love",codes:["(inlove)"]},"evil-grin":{title:"Evil grin",codes:["]:)",">:)","(grin)"]},talking:{title:"Talking",codes:["(talk)"]},yawn:{title:"Yawn",codes:["(yawn)","|-()"]},puke:{title:"Puke",codes:["(puke)",":&",":-&",":=&"]},"doh!":{title:"Doh!",codes:["(doh)"]},angry:{title:"Angry",codes:[":@",":-@",":=@","x(","x-(","x=(","X(","X-(","X=("]},"it-wasnt-me":{title:"It wasn't me",codes:["(wasntme)"]},party:{title:"Party!!!",codes:["(party)"]},worried:{title:"Worried",codes:[":S",":-S",":=S",":s",":-s",":=s"]},mmm:{title:"Mmm...",codes:["(mm)"]},nerd:{title:"Nerd",codes:["8-|","B-|","8|","B|","8=|","B=|","(nerd)"]},"lips-sealed":{title:"Lips Sealed",codes:[":x",":-x",":X",":-X",":#",":-#",":=x",":=X",":=#"]},hi:{title:"Hi",codes:["(hi)"]},call:{title:"Call",codes:["(call)"]},devil:{title:"Devil",codes:["(devil)"]},angel:{title:"Angel",codes:["(angel)"]},envy:{title:"Envy",codes:["(envy)"]},wait:{title:"Wait",codes:["(wait)"]},bear:{title:"Bear",codes:["(bear)","(hug)"]},"make-up":{title:"Make-up",codes:["(makeup)","(kate)"]},"covered-laugh":{title:"Covered Laugh",codes:["(giggle)","(chuckle)"]},"clapping-hands":{title:"Clapping Hands",codes:["(clap)"]},thinking:{title:"Thinking",codes:["(think)",":?",":-?",":=?"]},bow:{title:"Bow",codes:["(bow)"]},rofl:{title:"Rolling on the floor laughing",codes:["(rofl)"]},whew:{title:"Whew",codes:["(whew)"]},happy:{title:"Happy",codes:["(happy)"]},smirking:{title:"Smirking",codes:["(smirk)"]},nodding:{title:"Nodding",codes:["(nod)"]},shaking:{title:"Shaking",codes:["(shake)"]},punch:{title:"Punch",codes:["(punch)"]},emo:{title:"Emo",codes:["(emo)"]},yes:{title:"Yes",codes:["(y)","(Y)","(ok)"]},no:{title:"No",codes:["(n)","(N)"]},handshake:{title:"Shaking Hands",codes:["(handshake)"]},skype:{title:"Skype",codes:["(skype)","(ss)"]},heart:{title:"Heart",codes:["(h)","<3","(H)","(l)","(L)"]},"broken-heart":{title:"Broken heart",codes:["(u)","(U)"]},mail:{title:"Mail",codes:["(e)","(m)"]},flower:{title:"Flower",codes:["(f)","(F)"]},rain:{title:"Rain",codes:["(rain)","(london)","(st)"]},sun:{title:"Sun",codes:["(sun)"]},time:{title:"Time",codes:["(o)","(O)","(time)"]},music:{title:"Music",codes:["(music)"]},movie:{title:"Movie",codes:["(~)","(film)","(movie)"]},phone:{title:"Phone",codes:["(mp)","(ph)"]},coffee:{title:"Coffee",codes:["(coffee)"]},pizza:{title:"Pizza",codes:["(pizza)","(pi)"]},cash:{title:"Cash",codes:["(cash)","(mo)","($)"]},muscle:{title:"Muscle",codes:["(muscle)","(flex)"]},cake:{title:"Cake",codes:["(^)","(cake)"]},beer:{title:"Beer",codes:["(beer)"]},drink:{title:"Drink",codes:["(d)","(D)"]},dance:{title:"Dance",codes:["(dance)","\\o/","\\:D/","\\:d/"]},ninja:{title:"Ninja",codes:["(ninja)"]},star:{title:"Star",codes:["(*)"]},mooning:{title:"Mooning",codes:["(mooning)"]},finger:{title:"Finger",codes:["(finger)"]},bandit:{title:"Bandit",codes:["(bandit)"]},drunk:{title:"Drunk",codes:["(drunk)"]},smoking:{title:"Smoking",codes:["(smoking)","(smoke)","(ci)"]},toivo:{title:"Toivo",codes:["(toivo)"]},rock:{title:"Rock",codes:["(rock)"]},headbang:{title:"Headbang",codes:["(headbang)","(banghead)"]},bug:{title:"Bug",codes:["(bug)"]},fubar:{title:"Fubar",codes:["(fubar)"]},poolparty:{title:"Poolparty",codes:["(poolparty)"]},swearing:{title:"Swearing",codes:["(swear)"]},tmi:{title:"TMI",codes:["(tmi)"]},heidy:{title:"Heidy",codes:["(heidy)"]},myspace:{title:"MySpace",codes:["(MySpace)"]},malthe:{title:"Malthe",codes:["(malthe)"]},tauri:{title:"Tauri",codes:["(tauri)"]},priidu:{title:"Priidu",codes:["(priidu)"]}};
+
 PLUGINS.emoticons =(function(text) {
-  var url = "./images/icons/", patterns = [],
-    metachars = /[[\]{}()*+?.\\|^$\-,&#\s]/g;
-
-  // build a regex pattern for each defined property
-  for (var i in EMOTIONS) {
-    if (EMOTIONS.hasOwnProperty(i)){ // escape metacharacters
-      patterns.push('('+i.replace(metachars, "\\$&")+')');
-    }
-  }
-
-  // build the regular expression and replace
-  return text.replace(new RegExp(patterns.join('|'),'g'), function (match) {
-    if(typeof EMOTIONS[match] != 'undefined'){
-      return '<i class="emoticon" style="background-position: ' + EMOTIONS[match] + '"></i>';
-    } else {return match;}
-  });
+  $.emoticons.define(definition);
+  return $.emoticons.replace(text);
 });
 

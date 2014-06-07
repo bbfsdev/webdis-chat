@@ -2,6 +2,9 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8">
   <meta name="viewport" content="width=device-width">
+  <meta http-Equiv="Cache-Control" Content="no-cache">
+  <meta http-Equiv="Pragma" Content="no-cache">
+  <meta http-Equiv="Expires" Content="0">
   <!-- load JQuery -->
   <script type="text/javascript" src="./lib/jquery-1.8.3.min.js"></script>
   <script type="text/javascript" src="./lib/jquery.ba-bbq.min.js"></script>
@@ -14,12 +17,14 @@
   
   <!-- Application scripts -->
   <script src="./js/langs.js"></script>
-  <script src="./js/emoticons.js"></script>
   <script src="./js/conf.js"></script>
   <script src="./js/app.js"></script>
   <script src="./js/chat_app.js"></script>
   <script src="./js/admin.js"></script>
   <script src="./js/plugins.js"></script>
+  <!-- Emotions -->
+  <link href="./lib/kof-emoticons/emoticons.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="./lib/kof-emoticons/emoticons.js"></script>
 
   <link rel="stylesheet" type="text/css" href="style.css">
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
@@ -29,6 +34,7 @@
     <div class="btns">
       <button class="btn " id="exportBtn" data-tr="exportBtn" data-tr-place-tag="span">***</button>
       <input type="checkbox" class="btn " id="autoApproveBtn"><label id="inputForAutoApproveBtn" for="autoApproveBtn" data-tr-place-tag="span" data-tr="autoApproveBtn">***</label>
+      <button class="btn " id="deleteBtn" data-tr="deleteBtn" data-tr-place-tag="span">***</button>
     </div>
   </div>
   <div class="content">

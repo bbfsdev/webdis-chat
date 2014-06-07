@@ -28,6 +28,18 @@ var getQuestions = function(callback) {
   });
 };
 
+var deleteAllQuestions = function() {
+  getQuestions(function(db) {
+    var questions = [];
+    for (var idx in db) {
+      var question = db[idx];
+      questions.push(question.id);
+    }
+    del_keys(questions, function(data) { alert(data.DEL + ' questions were deleted.'); });
+    incr(KEY_SHOULD_UPDATE(), function(data) {});
+  });
+}
+
 var latest_question = "";
 var sholdUpdate = function (callback) {
   get_key(KEY_SHOULD_UPDATE(), function(res) {
@@ -230,8 +242,9 @@ function startIntervals() {
 }
 
 
-$(document).ready(function () {
+$(document).ready(function() {
   initLang();
+  initUserCss();
   if(ISADMIN) {
     initAdminPage();
   } else {
@@ -245,14 +258,25 @@ function initUserPage() {
   PLUGINS.setLang();
   updateUser();
   $('.btn').button();  //use jquery UI buttons
-  if(ISADMIN) {
-  } else {
+  $('.btn span').each(function() {
+    $(this).addClass('comment').html(PLUGINS.emoticons($(this).html()));
+  });
+  if(!ISADMIN) {
     PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
+    PLUGINS.initHelpBtn($('#helpBtn'));
     getQuestions(PLUGINS.setHtmlAllQuestions);
   }
 };
 
 function initLang () {
   var lang = getParameter('lang');
-  TRANSLATION.lang = (lang != null) ? lang: TRANSLATION.lang; 
+  TRANSLATION.lang = (lang != null && lang in TRANSLATION) ? lang: TRANSLATION.lang; 
 }
+
+function initUserCss() {
+  var css_url = getParameter('css');
+  if (css_url != null) {
+    $('head').append('<link rel="stylesheet" href="' + css_url + '" type="text/css" />');
+  }
+}
+

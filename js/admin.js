@@ -15,6 +15,7 @@ function initAdminPage() {
   $('.btn').button();//use jquery UI buttons
 
   PLUGINS.initAutoApproveBtn($('#autoApproveBtn'));
+  PLUGINS.initDeleteBtn($('#deleteBtn'));
   PLUGINS.initExportBtn($('#exportBtn'));
   getQuestions(PLUGINS.setHtmlAllQuestions);
   bindAdminEvents();
