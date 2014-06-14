@@ -15,7 +15,7 @@ var TRANSLATION = {
     exportBtn: 'export',
     deleteBtn: 'delete all questions',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },
   ua: {
     askBtn: 'Запитати',
@@ -30,7 +30,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   sv: {
     askBtn: 'Ställ fråga',
@@ -45,7 +45,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   sl: {
     askBtn: 'Vprašanje',
@@ -60,7 +60,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   ro: {
     askBtn: 'Întrebare',
@@ -75,7 +75,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   pt: {
     askBtn: 'Perguntar',
@@ -90,7 +90,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   pl: {
     askBtn: 'Zadaj pytanie',
@@ -105,7 +105,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   no: {
     askBtn: 'Still spørsmål',
@@ -120,7 +120,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   mk: {
     askBtn: 'Постави прашање',
@@ -135,7 +135,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   lt: {
     askBtn: 'Pateikti klausimą',
@@ -150,7 +150,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   lv: {
     askBtn: 'Jautāt',
@@ -165,7 +165,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   it: {
     askBtn: 'Fai una domanda',
@@ -180,7 +180,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   hu: {
     askBtn: 'Kérdés feltevése',
@@ -195,7 +195,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   de: {
     askBtn: 'Frage stellen',
@@ -210,7 +210,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   fr: {
     askBtn: 'Poser une question',
@@ -225,7 +225,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   nl: {
     askBtn: 'Stel een vraag',
@@ -240,7 +240,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   bg: {
     askBtn: 'Задайте въпрос',
@@ -255,7 +255,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   hr: {
     askBtn: 'Postavi pitanje',
@@ -270,7 +270,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },  
   cz: {
     askBtn: 'Položit otázku',
@@ -285,7 +285,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation',
+    messTitleAdmin: 'Moderation'
   },    
   es: {
     askBtn: 'Pregunta',
@@ -313,7 +313,7 @@ var TRANSLATION = {
     dir: 'ltr',
     exportBtn: 'export',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Модерация',
+    messTitleAdmin: 'Модерация'
   },
   he: {
     askBtn: 'לשאול',
@@ -327,6 +327,21 @@ var TRANSLATION = {
     allow: 'להתיר',
     dir: 'rtl',
     exportBtn: 'export'
-  }
+  },
+  tr: {
+    askBtn: 'Soru Sor',
+    nameInput: 'İsim',
+    fromInput: 'Şehir',
+    messageInput: 'Mesaj',
+    sendBtn: 'Gönder',
+    cancelBtn: 'İptal',
+    removeBtn: 'remove',
+    disallow: 'disallow',
+    allow: 'allow' ,
+    dir: 'ltr',
+    exportBtn: 'export',
+    autoApproveBtn: 'auto approve',
+    messTitleAdmin: 'Moderation'
+  } 
 };
 

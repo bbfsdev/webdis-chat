@@ -22,6 +22,8 @@ PLUGINS.initAskForm = (function($btnObj, $formObj){
     $formObj.find('#from').val('');
     $formObj.find('#message').val('');
   });
+
+  $('input, textarea').placeholder();
 });
 
 PLUGINS.initHelpBtn = (function($helpBtn) {
@@ -134,7 +136,7 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
     var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
     var itemMess = $('<div>').addClass('messageQ').addClass('comment').html(PLUGINS.emoticons(q.question));
-    var itemAdminAllow = $('<butto>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
+    var itemAdminAllow = $('<button>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
     var itemAdminDisallow = $('<div>').addClass('adminDisallow btnSmall btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
     var itemAdminRemove = $('<div>').addClass('adminRemove btnSmall btnRed').html(TRANSLATION[TRANSLATION.lang].removeBtn);
 
@@ -181,22 +183,26 @@ PLUGINS.setLang = (function(lang){
       if (!transl) {
         transl = TRANSLATION[TRANSLATION.fallback_lang][$el.attr('data-tr')];
       }
-      var forTag = $el.attr("data-tr-place-tag");
-      var forAttr = $el.attr('data-tr-place-attr');
 
-      if (typeof forAttr !== 'undefined' && forAttr !== false) {
-        $el.attr(forAttr, transl);
-        return;
-      } else if (typeof forTag !== 'undefined' && forTag !== false) {
-        var testLength = $el.has(forTag);
-        if (testLength.length !== 0 ) {
-          $el.find(forTag).html(transl);
+      // Do nothing if no translation.
+      if (typeof transl !== 'undefined') {
+        var forTag = $el.attr("data-tr-place-tag");
+        var forAttr = $el.attr('data-tr-place-attr');
+
+        if (typeof forAttr !== 'undefined' && forAttr !== false) {
+          $el.attr(forAttr, transl);
+          return;
+        } else if (typeof forTag !== 'undefined' && forTag !== false) {
+          var testLength = $el.has(forTag);
+          if (testLength.length !== 0 ) {
+            $el.find(forTag).html(transl);
+          } else {
+            $el.html(transl);
+          };
+          return;
         } else {
-          $el.html(transl);
-        };
-        return;
-      } else {
-        $el.html(transl);        
+          $el.html(transl);        
+        }
       }
     });
 });

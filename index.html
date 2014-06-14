@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
@@ -11,6 +12,9 @@
   
   <!-- Fix $.ajax for IE8,9 -->
   <script type="text/javascript" src="./lib/jquery.xdomainrequest.js"></script>
+
+  <!-- Fix placeholders for several Browsers -->
+  <script type="text/javascript" src="./lib/jquery.placeholder.js"></script>
   
   <!-- Application scripts -->
   <script src="./js/langs.js"></script>
@@ -28,7 +32,7 @@
 <body dir="ltr">
   <div class="btns">
     <button class="btn " id="askBtn" data-tr="askBtn" data-tr-place-tag="span">***</button>
-    <bytton class="btn " id="helpBtn" data-tr="helpBtn" data-tr-place-tag="span">:) ?</button>
+    <button class="btn " id="helpBtn" data-tr="helpBtn" data-tr-place-tag="span">:) ?</button>
   </div>
   <div id="askForm">
     <input type="text" placeholder="***" id="name" class="ui-widget ui-corner-all ui-button-text-only"  data-tr="nameInput" data-tr-place-attr="placeholder" />
