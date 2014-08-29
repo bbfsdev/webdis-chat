@@ -7,10 +7,13 @@
 var handle_error = function(err) {
   debug = $.url('?debug');
   if (debug) {
-  // Uncomment for debuging XHR (ajax). 
+    // debuging XHR (ajax).
     alert(err);
   }
 };
+
+function callWebdis(url, success) {
+}
 
 function incr(key, callback) {
   $.ajax({
