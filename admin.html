@@ -26,6 +26,9 @@
   <link href="./lib/kof-emoticons/emoticons.css" rel="stylesheet" type="text/css"/>
   <script type="text/javascript" src="./lib/kof-emoticons/emoticons.js"></script>
 
+  <!-- Fix placeholders for several Browsers -->
+  <script type="text/javascript" src="./lib/jquery.placeholder.js"></script>
+
   <link rel="stylesheet" type="text/css" href="style.css">
   <script>window["_GOOG_TRANS_EXT_VER"] = "1";</script>
 </head>
@@ -40,6 +43,16 @@
   <div class="content">
     <h3 data-tr="messTitleAdmin">***</h3>
     <div class="info">Number of online users: <span id="count"></span></div>
+    <div id="askForm">
+      <input type="text" placeholder="***" id="to" class="ui-widget ui-corner-all ui-button-text-only"  data-tr="toInput" data-tr-place-attr="placeholder" />
+      <input type="text" placeholder="***" id="name" class="ui-widget ui-corner-all ui-button-text-only"  data-tr="nameInput" data-tr-place-attr="placeholder" />
+      <input type="text" placeholder="***" id="from" class="ui-widget ui-corner-all ui-button-text-only" data-tr="fromInput" data-tr-place-attr="placeholder"/>
+      <textarea placeholder="***" id="message" class="ui-widget ui-corner-all ui-button-text-only" data-tr="messageInput" data-tr-place-attr="placeholder"></textarea>
+      <div class="btns">
+        <button class="btn sendBtn" data-tr="sendBtn" data-tr-place-tag="span">***</button>
+        <button class="btn cancelBtn" data-tr="cancelBtn" data-tr-place-tag="span">***</button>
+      </div>
+    </div>
     <div id="questionsList"></div>
   </div>
   <div id="dialog" title="Export"></div> 
