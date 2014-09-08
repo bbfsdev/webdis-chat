@@ -181,7 +181,10 @@ PLUGINS.setHtmlAllQuestions = (function(data){
       itemAdminButton = itemAdminAllow;
     }
 
-    var itemAdmin = $('<div>').addClass('btns toR').append(itemAdminButton).append(itemAdminRemove).append(itemAdminReply);
+    var itemAdmin = $('<div>').addClass('btns toR').append(itemAdminButton).append(itemAdminRemove);
+    if (getParameter('static_form') == 'true') {
+      itemAdmin.append(itemAdminReply);
+    }
 
     item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
     $('#questionsList').prepend(item);
