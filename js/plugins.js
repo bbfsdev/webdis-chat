@@ -1,23 +1,58 @@
 var PLUGINS = {};
 
-PLUGINS.initAskForm = (function($btnObj, $formObj){
-  $btnObj.on('click', function(){
-    $btnObj.hide();
-    $formObj.show();
-  });
-      
+function emptyString(val) {
+  return typeof(val) == 'string' && val == '';
+}
+
+PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
+  if (getParameter('static_form') != 'true') {
+    $btnObj.on('click', function(){
+      $btnObj.hide();
+      $formObj.show();
+    });
+
+    $formObj.find('.sendBtn').on('click', function(){
+      $formObj.hide();
+      $btnObj.show();
+    });
+
+    $formObj.find('.cancelBtn').on('click', function(){
+      $formObj.hide();
+      $btnObj.show();
+    });
+  }
+
+  PLUGINS.initAskForm($formObj);
+});
+
+PLUGINS.initAskForm = (function($formObj) {
+  var from_text = getParameter('from_text');
+  if (!emptyString(from_text)) {
+    $formObj.find('#from').val(from_text);
+  }
+  var name_text = getParameter('name_text');
+  if (!emptyString(name_text)) {
+    $formObj.find('#name').val(name_text);
+  }
+
   $formObj.find('.sendBtn').on('click', function(){
-    $formObj.hide();
-    $('#askBtn').show();
-    addQuestion($formObj.find('#name').val(), $formObj.find('#from').val(), $formObj.find('#message').val(), false);
-    $formObj.find('#name').val('');
-    $formObj.find('#from').val('');
+    if (getParameter('alert_on_empty_to') == 'true' && emptyString($formObj.find('#to').val())) {
+      alert('To field is empty, please choose who to reply.');
+      return;
+    }
+    if (emptyString($formObj.find('#message').val())) {
+      alert('Message is empty, please write message');
+      return;
+    }
+    addQuestion($formObj.find('#to').val(), $formObj.find('#name').val(), $formObj.find('#from').val(), $formObj.find('#message').val(), false);
     $formObj.find('#message').val('');
+    if (getParameter('static_form') != 'true') {
+      $formObj.find('#name').val('');
+      $formObj.find('#from').val('');
+    }
   });
       
   $formObj.find('.cancelBtn').on('click', function(){
-    $formObj.hide();
-    $('#askBtn').show();
     $formObj.find('#name').val('');
     $formObj.find('#from').val('');
     $formObj.find('#message').val('');
@@ -139,6 +174,7 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     var itemAdminAllow = $('<button>').addClass('adminAllow btnSmall btnGreen').html(TRANSLATION[TRANSLATION.lang].allow);
     var itemAdminDisallow = $('<div>').addClass('adminDisallow btnSmall btnOrange').html(TRANSLATION[TRANSLATION.lang].disallow);
     var itemAdminRemove = $('<div>').addClass('adminRemove btnSmall btnRed').html(TRANSLATION[TRANSLATION.lang].removeBtn);
+    var itemAdminReply = $('<div>').addClass('adminReply btnSmall btnBlue').html(TRANSLATION[TRANSLATION.lang].replyBtn)
 
     var itemAdminButton = itemAdminDisallow;
     if (!q.approve) {
@@ -146,6 +182,9 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     }
 
     var itemAdmin = $('<div>').addClass('btns toR').append(itemAdminButton).append(itemAdminRemove);
+    if (getParameter('static_form') == 'true') {
+      itemAdmin.append(itemAdminReply);
+    }
 
     item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
     $('#questionsList').prepend(item);

@@ -5,8 +5,10 @@
 KEY_USERS_COUNT = function() { return ["chat", getLabel(), "users", "count"].join(".") ; };
 KEY_USER = function(user_id) { return ["chat", getLabel(), "user", user_id].join(".") ; };
 KEY_SHOULD_UPDATE = function() { return ["chat", getLabel(), "should_update"].join(".") ; };
+KEY_SHOULD_UPDATE_LABEL = function(label) { return ["chat", label, "should_update"].join(".") ; };
 KEY_QUESTIONS_COUNT = function() { return ["chat", getLabel(), "questions", "count"].join(".") ; };
 KEY_QUESTION = function(question_id) { return ["chat", getLabel(), "question", question_id].join(".") ; };
+KEY_QUESTION_CUSTOM_LABEL = function(question_id, label) { return ["chat", label, "question", question_id].join(".") ; };
 KEY_RESTART = function() { return ["chat", getLabel(), "restart"].join("."); };
 KEY_AUTO_APPROVE = function() { return ["chat", getLabel(), "auto", "approve"].join("."); };
 
@@ -40,15 +42,24 @@ var deleteAllQuestions = function() {
   });
 }
 
-var latest_question = "";
-var sholdUpdate = function (callback) {
-  get_key(KEY_SHOULD_UPDATE(), function(res) {
-    if (latest_question != res) {
-      latest_question = res;
-      callback(true);
-    } else {
-      callback(false);
-    }
+var latest_question = {};
+var shouldUpdate = function (callback) {
+  keys(KEY_SHOULD_UPDATE(), function(keys_data) {
+    mget(keys_data.KEYS, function(data) {
+      var ret = false;
+      for (var idx in data.MGET) {
+        var key = keys_data.KEYS[idx];
+        var value = parseInt(data.MGET[idx]);
+        if (!(key in latest_question)) {
+          latest_question[key] = -1;
+        }
+        if (parseInt(latest_question[key]) < value) {
+          latest_question[key] = value;
+          ret = true;
+        }
+      }
+      callback(ret);
+    });
   });
 };
 
@@ -102,7 +113,7 @@ if (debug_mode) {
     }];
     callback(data);
   };
-  sholdUpdate = function(callback){
+  shouldUpdate = function(callback){
     return callback(true);
   };
   updateUser = function(){return true;};
@@ -151,7 +162,7 @@ function userCount(callback) {
   });
 }
 
-function addQuestion(name, from, question) {
+function addQuestion(label, name, from, question) {
   incr(KEY_QUESTIONS_COUNT(), function(id) {
     get_timestamp(function(time_now) {
       get_key(KEY_AUTO_APPROVE(), function(auto_approve) {
@@ -165,18 +176,22 @@ function addQuestion(name, from, question) {
           'from': from,
           'question': question,
           'approve': approve,
-          'id': KEY_QUESTION(id),
+          'id': (typeof(label) == 'string' && label != '') ? KEY_QUESTION_CUSTOM_LABEL(id, label) : KEY_QUESTION(id),
           'timestamp': time_now
         }
-        setQuestion(q);
+        setQuestion(q, label);
       });
     });
   });
 }
 
-function setQuestion(q) {
+function setQuestion(q, label) {
   set_key(q.id, $.param(q));
-  incr(KEY_SHOULD_UPDATE(), function(data) {});
+  if (typeof(label) == 'string' && label != '') {
+    incr(KEY_SHOULD_UPDATE_LABEL(label), function(data) {});
+  } else {
+    incr(KEY_SHOULD_UPDATE(), function(data) {});
+  }
 }
 
 function read_question(q) {
@@ -224,7 +239,7 @@ function questionEq(a, b, limit) {
 function startIntervals() {    
   // Updates questions list.
   setInterval(function () {
-    sholdUpdate(function(should_update) {
+    shouldUpdate(function(should_update) {
       if (should_update) {
         getQuestions(PLUGINS.setHtmlAllQuestions);
       }
@@ -245,6 +260,7 @@ function startIntervals() {
 $(document).ready(function() {
   initLang();
   initUserCss();
+  initCommon();
   if(ISADMIN) {
     initAdminPage();
   } else {
@@ -252,6 +268,18 @@ $(document).ready(function() {
   }
   startIntervals();
 });
+
+
+function initCommon() {
+  if (getParameter('auto_approve') == 'true') {
+    set_key(KEY_AUTO_APPROVE(), true);
+  }
+  if (getParameter('static_form') == 'true') {
+    $("#askForm").show();
+    $("#askBtn").hide();
+    $("#helpBtn").hide();
+  }
+}
 
 
 function initUserPage() {
@@ -262,7 +290,7 @@ function initUserPage() {
     $(this).addClass('comment').html(PLUGINS.emoticons($(this).html()));
   });
   if(!ISADMIN) {
-    PLUGINS.initAskForm($('#askBtn'), $("#askForm"));
+    PLUGINS.initAskButtonAndForm($('#askBtn'), $("#askForm"));
     PLUGINS.initHelpBtn($('#helpBtn'));
     getQuestions(PLUGINS.setHtmlAllQuestions);
   }

@@ -5,6 +5,7 @@ var TRANSLATION = {
     askBtn: 'Ask',
     nameInput: 'Name',
     fromInput: 'From',
+    toInput: 'To',
     messageInput: 'Message',
     sendBtn: 'Send',
     cancelBtn: 'Cancel',
@@ -15,7 +16,8 @@ var TRANSLATION = {
     exportBtn: 'export',
     deleteBtn: 'delete all questions',
     autoApproveBtn: 'auto approve',
-    messTitleAdmin: 'Moderation'
+    messTitleAdmin: 'Moderation',
+    replyBtn: 'reply'
   },
   ua: {
     askBtn: 'Запитати',

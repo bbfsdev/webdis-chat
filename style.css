@@ -21,6 +21,8 @@
 .btnGreen:active{background-color: #4fcf16;}
 .btnOrange{background-color: #ffb527;}
 .btnOrange:active{background-color: #cf9507;}
+.btnBlue{background-color: #6699FF;}
+.btnBlue:active{background-color: #66CCFF;}
 
 .tabSwitcher{margin: 0;}
 .tabSwitcher li{display: inline-block;border: 1px;box-shadow: none; border-radius: 5px 5px 0 0; }
