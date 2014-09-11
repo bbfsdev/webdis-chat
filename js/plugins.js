@@ -1,7 +1,7 @@
 var PLUGINS = {};
 
-function emptyString(val) {
-  return typeof(val) == 'string' && val == '';
+function notEmptyString(val) {
+  return typeof(val) == 'string' && val != '';
 }
 
 PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
@@ -27,20 +27,20 @@ PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
 
 PLUGINS.initAskForm = (function($formObj) {
   var from_text = getParameter('from_text');
-  if (!emptyString(from_text)) {
+  if (notEmptyString(from_text)) {
     $formObj.find('#from').val(from_text);
   }
   var name_text = getParameter('name_text');
-  if (!emptyString(name_text)) {
+  if (notEmptyString(name_text)) {
     $formObj.find('#name').val(name_text);
   }
 
   $formObj.find('.sendBtn').on('click', function(){
-    if (getParameter('alert_on_empty_to') == 'true' && emptyString($formObj.find('#to').val())) {
+    if (getParameter('alert_on_empty_to') == 'true' && !notEmptyString($formObj.find('#to').val())) {
       alert('To field is empty, please choose who to reply.');
       return;
     }
-    if (emptyString($formObj.find('#message').val())) {
+    if (!notEmptyString($formObj.find('#message').val())) {
       alert('Message is empty, please write message');
       return;
     }
