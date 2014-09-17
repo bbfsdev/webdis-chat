@@ -77,7 +77,6 @@ PLUGINS.initHelpBtn = (function($helpBtn) {
   });
 });
 
-
 PLUGINS.initAutoApproveBtn = (function($autoApproveBtn){
   var toggleAutoApproveBtn = function(autoApprove) {
     var auto = false;
@@ -157,7 +156,26 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     $('#questionsList').html('');
     for (var i = 0; i < db.length; i++) {
       if (ISADMIN) {
-        setHtmlItemQAdmin(db[i], i);
+        var item = setHtmlItemQAdmin(db[i], i);
+
+        // Buzzer!
+        if (getParameter('buzzer') == 'true') {
+          if (i == db.length - 1) {
+            var bgColor = item.css('background-color');
+            var color = item.css('color');
+            item.animate({
+              backgroundColor: "#aa0000",
+              color: "#fff"
+            }, 1000,
+            function() {
+              item.animate({
+                backgroundColor: bgColor,
+                color: color
+              }, 1000);
+            });
+            $('#buzzer').get(0).play();
+          }
+        }
       } else {
         setHtmlItemQ(db[i], i);    
       }
@@ -188,6 +206,7 @@ PLUGINS.setHtmlAllQuestions = (function(data){
 
     item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
     $('#questionsList').prepend(item);
+    return item;
   }
 
   function setHtmlItemQ (q) {

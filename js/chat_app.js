@@ -150,7 +150,7 @@ function getLabel() {
 
   label = getParameter('label');
   if (!label) {
-    label = conf().host;
+    label = location.host;
   }
 
   return label;
