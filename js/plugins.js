@@ -1,7 +1,7 @@
 var PLUGINS = {};
 
-function emptyString(val) {
-  return typeof(val) == 'string' && val == '';
+function notEmptyString(val) {
+  return typeof(val) == 'string' && val != '';
 }
 
 PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
@@ -27,20 +27,20 @@ PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
 
 PLUGINS.initAskForm = (function($formObj) {
   var from_text = getParameter('from_text');
-  if (!emptyString(from_text)) {
+  if (notEmptyString(from_text)) {
     $formObj.find('#from').val(from_text);
   }
   var name_text = getParameter('name_text');
-  if (!emptyString(name_text)) {
+  if (notEmptyString(name_text)) {
     $formObj.find('#name').val(name_text);
   }
 
   $formObj.find('.sendBtn').on('click', function(){
-    if (getParameter('alert_on_empty_to') == 'true' && emptyString($formObj.find('#to').val())) {
+    if (getParameter('alert_on_empty_to') == 'true' && !notEmptyString($formObj.find('#to').val())) {
       alert('To field is empty, please choose who to reply.');
       return;
     }
-    if (emptyString($formObj.find('#message').val())) {
+    if (!notEmptyString($formObj.find('#message').val())) {
       alert('Message is empty, please write message');
       return;
     }
@@ -76,7 +76,6 @@ PLUGINS.initHelpBtn = (function($helpBtn) {
     $("#helpDialog").dialog({ width:'auto' });
   });
 });
-
 
 PLUGINS.initAutoApproveBtn = (function($autoApproveBtn){
   var toggleAutoApproveBtn = function(autoApprove) {
@@ -155,13 +154,39 @@ PLUGINS.initExportBtn = (function($exportBtn){
 PLUGINS.setHtmlAllQuestions = (function(data){
   function setHtmlAllQuestions (db) {
     $('#questionsList').html('');
+    var last_item = null;
+    var last_db_item = null;
     for (var i = 0; i < db.length; i++) {
+      var item = null;
       if (ISADMIN) {
-        setHtmlItemQAdmin(db[i], i);
+        item = setHtmlItemQAdmin(db[i], i);
       } else {
-        setHtmlItemQ(db[i], i);    
+        item = setHtmlItemQ(db[i], i);    
       }
-    };
+      if (item != null) {
+        last_item = item;
+        last_db_item = db[i];
+      }
+    }
+    // Buzzer!
+    if (last_item != null && getParameter('buzzer') == 'true') {
+      var from_text = getParameter('from_text');
+      if (from_text != last_db_item.from) {
+        var bgColor = last_item.css('background-color');
+        var color = last_item.css('color');
+        last_item.animate({
+          backgroundColor: "#aa0000",
+          color: "#fff"
+        }, 1000,
+        function() {
+          last_item.animate({
+            backgroundColor: bgColor,
+            color: color
+          }, 1000);
+        });
+        $('#buzzer').get(0).play();
+      }
+    } // End Buzzer!
   }
   setHtmlAllQuestions(data);
 
@@ -188,6 +213,7 @@ PLUGINS.setHtmlAllQuestions = (function(data){
 
     item.append(itemAdmin).append(itemName).append(itemFrom).append(itemTime).append(itemMess);
     $('#questionsList').prepend(item);
+    return item;
   }
 
   function setHtmlItemQ (q) {
@@ -200,7 +226,9 @@ PLUGINS.setHtmlAllQuestions = (function(data){
 
       item.append(itemName).append(itemFrom).append(itemTime).append(itemMess);
       $('#questionsList').prepend(item);
+      return item;
     }
+    return null;
   }
  
 });

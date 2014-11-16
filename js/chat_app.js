@@ -150,7 +150,7 @@ function getLabel() {
 
   label = getParameter('label');
   if (!label) {
-    label = conf().host;
+    label = location.host;
   }
 
   return label;
@@ -187,7 +187,7 @@ function addQuestion(label, name, from, question) {
 
 function setQuestion(q, label) {
   set_key(q.id, $.param(q));
-  if (typeof(label) == 'string' && label != '') {
+  if (notEmptyString(label)) {
     incr(KEY_SHOULD_UPDATE_LABEL(label), function(data) {});
   } else {
     incr(KEY_SHOULD_UPDATE(), function(data) {});
