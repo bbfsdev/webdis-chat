@@ -154,32 +154,39 @@ PLUGINS.initExportBtn = (function($exportBtn){
 PLUGINS.setHtmlAllQuestions = (function(data){
   function setHtmlAllQuestions (db) {
     $('#questionsList').html('');
+    var last_item = null;
+    var last_db_item = null;
     for (var i = 0; i < db.length; i++) {
+      var item = null;
       if (ISADMIN) {
-        var item = setHtmlItemQAdmin(db[i], i);
-
-        // Buzzer!
-        if (getParameter('buzzer') == 'true') {
-          if (i == db.length - 1) {
-            var bgColor = item.css('background-color');
-            var color = item.css('color');
-            item.animate({
-              backgroundColor: "#aa0000",
-              color: "#fff"
-            }, 1000,
-            function() {
-              item.animate({
-                backgroundColor: bgColor,
-                color: color
-              }, 1000);
-            });
-            $('#buzzer').get(0).play();
-          }
-        }
+        item = setHtmlItemQAdmin(db[i], i);
       } else {
-        setHtmlItemQ(db[i], i);    
+        item = setHtmlItemQ(db[i], i);    
       }
-    };
+      if (item != null) {
+        last_item = item;
+        last_db_item = db[i];
+      }
+    }
+    // Buzzer!
+    if (last_item != null && getParameter('buzzer') == 'true') {
+      var from_text = getParameter('from_text');
+      if (from_text != last_db_item.from) {
+        var bgColor = last_item.css('background-color');
+        var color = last_item.css('color');
+        last_item.animate({
+          backgroundColor: "#aa0000",
+          color: "#fff"
+        }, 1000,
+        function() {
+          last_item.animate({
+            backgroundColor: bgColor,
+            color: color
+          }, 1000);
+        });
+        $('#buzzer').get(0).play();
+      }
+    } // End Buzzer!
   }
   setHtmlAllQuestions(data);
 
@@ -219,7 +226,9 @@ PLUGINS.setHtmlAllQuestions = (function(data){
 
       item.append(itemName).append(itemFrom).append(itemTime).append(itemMess);
       $('#questionsList').prepend(item);
+      return item;
     }
+    return null;
   }
  
 });
