@@ -66,7 +66,11 @@ var shouldUpdate = function (callback) {
 var updateUser = function () {
   incr(KEY_USERS_COUNT(), function(user_id) {
     setInterval(function() {
-      set_key(KEY_USER(user_id), "live", function() {}, conf().user_count_timeout);
+      var from_text = getParameter('from_text');
+      if (!notEmptyString(from_text)) {
+        from_text = 'unknown' + user_id;
+      }
+      set_key(KEY_USER(user_id), from_text, function() {}, conf().user_count_timeout + 2);
     }, conf().user_count_timeout * 1000);
   });
 }
@@ -84,6 +88,7 @@ var updatePollWidget = function() {
 // START of Debug mode
 var debug_mode = false;
 var ISADMIN = false;
+var IS_USER_LIST = false;
 if (debug_mode) {
   getQuestions = function(callback) {
     var allSmiles;
@@ -236,16 +241,7 @@ function questionEq(a, b, limit) {
   return true;
 }
 
-function startIntervals() {    
-  // Updates questions list.
-  setInterval(function () {
-    shouldUpdate(function(should_update) {
-      if (should_update) {
-        getQuestions(PLUGINS.setHtmlAllQuestions);
-      }
-    });
-  }, conf().interval);
-
+function loadNewVersionInterval() {
   // Loads new version of chat (new code) if needed.
   setInterval(function() {
     get_key(KEY_RESTART(), function(res) {
@@ -256,6 +252,19 @@ function startIntervals() {
   }, conf().reload_interval);
 }
 
+function startIntervals() {    
+  // Updates questions list.
+  setInterval(function () {
+    shouldUpdate(function(should_update) {
+      if (should_update) {
+        getQuestions(PLUGINS.setHtmlAllQuestions);
+      }
+    });
+  }, conf().interval);
+
+  loadNewVersionInterval();
+}
+
 
 $(document).ready(function() {
   initLang();
@@ -263,10 +272,14 @@ $(document).ready(function() {
   initCommon();
   if(ISADMIN) {
     initAdminPage();
+    startIntervals();
+  } else if (IS_USER_LIST) {
+    initUserListPage(); 
+    loadNewVersionInterval();
   } else {
     initUserPage();
+    startIntervals();
   }
-  startIntervals();
 });
 
 
@@ -294,6 +307,45 @@ function initUserPage() {
     PLUGINS.initHelpBtn($('#helpBtn'));
     getQuestions(PLUGINS.setHtmlAllQuestions);
   }
+};
+
+var getUsers = function(callback) {
+  keys(KEY_USER("*"), function(keys) {
+    mget(keys.KEYS, function(data) {
+      var users = [];
+      for (var idx in data.MGET) {
+        if (data.MGET[idx] != null) {
+          var username = data.MGET[idx];
+          users.push(username);
+        }
+      }
+      callback(users);
+    });
+  });
+};
+
+function initUserListPage() {
+  PLUGINS.setLang();
+  var updateUserLink = function() {
+    $("#users").empty();
+    var link_pattern = getParameter('link_pattern');
+    console.log(link_pattern);
+    getUsers(function(users) {
+      for (var idx in users) {
+        var username = users[idx];
+        if (username && username != "null") {
+          if (link_pattern) {
+            var link = link_pattern.replace('X', username)
+            $("#users").append("<div><a href='" + link + "'>" + username + "</a></div>");
+          } else {
+            $("#users").append("<div>" + username + "</div>");
+          }
+        }
+      }
+    });
+  };
+  setInterval(updateUserLink, conf().interval);
+  updateUserLink();
 };
 
 function initLang () {
