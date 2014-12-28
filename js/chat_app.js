@@ -11,24 +11,34 @@ KEY_QUESTION = function(question_id) { return ["chat", getLabel(), "question", q
 KEY_QUESTION_CUSTOM_LABEL = function(question_id, label) { return ["chat", label, "question", question_id].join(".") ; };
 KEY_RESTART = function() { return ["chat", getLabel(), "restart"].join("."); };
 KEY_AUTO_APPROVE = function() { return ["chat", getLabel(), "auto", "approve"].join("."); };
+KEY_LAST_SEEN = function(username) { return ["chat", "last_seen", username].join("."); };
+
 
 
 // Interface methods
 var getQuestions = function(callback) {
-  keys(KEY_QUESTION("*"), function(keys) {
-    mget(keys.KEYS, function(data) {
-      var db = [];
-      for (var idx in data.MGET) {
-        if (data.MGET[idx] != null) {
-          question = read_question(data.MGET[idx]);
-          db.push(question);
-        }
-      }
-      db.sort(function(a,b){return a.timestamp-b.timestamp});
-      callback(db);
-    });
-  });
+  getCustomQuestions(getLabel(), callback);
 };
+
+var getCustomQuestions = function(label, callback) {
+  keys(KEY_QUESTION_CUSTOM_LABEL('*', label), function(keys) {
+    if (keys.KEYS.length == 0) { 
+      callback([]);
+    } else {
+      mget(keys.KEYS, function(data) {
+        var db = [];
+        for (var idx in data.MGET) {
+          if (data.MGET[idx] != null) {
+            question = read_question(data.MGET[idx]);
+            db.push(question);
+          }
+        }
+        db.sort(function(a,b){return a.timestamp-b.timestamp});
+        callback(db);
+      });
+    }
+  });
+}
 
 var deleteAllQuestions = function() {
   getQuestions(function(db) {
@@ -63,13 +73,22 @@ var shouldUpdate = function (callback) {
   });
 };
 
+var getUsername = function(user_id) {
+  var from_text = getParameter('from_text');
+  if (!notEmptyString(from_text)) {
+    if (notEmptyString(user_id)) {
+      from_text = 'unknown' + user_id;
+    } else {
+      from_text = '';
+    }
+  }
+  return from_text;
+}
+
 var updateUser = function () {
   incr(KEY_USERS_COUNT(), function(user_id) {
     setInterval(function() {
-      var from_text = getParameter('from_text');
-      if (!notEmptyString(from_text)) {
-        from_text = 'unknown' + user_id;
-      }
+      var from_text = getUsername();
       set_key(KEY_USER(user_id), from_text, function() {}, conf().user_count_timeout + 2);
     }, conf().user_count_timeout * 1000);
   });
@@ -252,12 +271,33 @@ function loadNewVersionInterval() {
   }, conf().reload_interval);
 }
 
+var getLabelFromQuestionId = function(question_id) {
+  return question_id.match(/chat.(.*).question.[0-9]+/)[1];
+};
+
+var updateSeenQuestions = function(last_question) {
+  hset(KEY_LAST_SEEN(getUsername()), getLabelFromQuestionId(last_question.id), last_question.timestamp);
+};
+
+var getLastSeen = function(callback) {
+  hget_all(KEY_LAST_SEEN(getUsername()), function(last_seen) {
+    var ret = {};
+    for (var idx in last_seen) {
+      ret[idx] = parseInt(last_seen[idx]);
+    }
+    callback(ret);
+  });
+};
+
 function startIntervals() {    
   // Updates questions list.
   setInterval(function () {
     shouldUpdate(function(should_update) {
       if (should_update) {
-        getQuestions(PLUGINS.setHtmlAllQuestions);
+        getQuestions(function(questions) {
+          PLUGINS.setHtmlAllQuestions(questions);
+          updateSeenQuestions(questions[questions.length-1]);
+        });
       }
     });
   }, conf().interval);
@@ -326,23 +366,51 @@ var getUsers = function(callback) {
 
 function initUserListPage() {
   PLUGINS.setLang();
+  updatePrivateRoomPattern();
   var updateUserLink = function() {
-    $("#users").empty();
+    // Get static prams
     var link_pattern = getParameter('link_pattern');
-    console.log(link_pattern);
-    getUsers(function(users) {
-      for (var idx in users) {
-        var username = users[idx];
-        if (username && username != "null") {
-          if (link_pattern) {
-            var link = link_pattern.replace('X', username)
-            $("#users").append("<div><a href='" + link + "'>" + username + "</a></div>");
-          } else {
-            $("#users").append("<div>" + username + "</div>");
+    if (!notEmptyString(link_pattern)) {
+      link_pattern = '//' + window.location.hostname + '?label=LABEL&auto_approve=true&from_text=' + getUsername();
+    }
+
+    // Get private rooms status
+    updatePrivateRoomStatus(function (privateRoomsStatus) {
+      console.log(privateRoomsStatus);
+      getLastSeen(function (lastSeenStatus) {
+        console.log(lastSeenStatus);
+
+        // Get other users online
+        getUsers(function(users) {
+  
+          // Update links to other users
+          $("#users").empty();
+          for (var idx in users) {
+            var username = users[idx];
+            if (username && username != "null") {
+              if (link_pattern && username != getUsername()) {
+                var link_label = privateRoomLabel(getLabel(), [username, getUsername()]);
+                var link = link_pattern.replace('LABEL', link_label);
+                var last_seen_timestamp = 0;
+                if (link_label in lastSeenStatus) {
+                  last_seen_timestamp = parseInt(lastSeenStatus[link_label]);
+                }
+                var private_room_status_timestamp = 0;
+                if (link_label in privateRoomsStatus) {
+                  private_room_status_timestamp = parseInt(privateRoomsStatus[link_label]);
+                }
+                if (private_room_status_timestamp > last_seen_timestamp) {
+                  username = '<b>' + username + '</b>';
+                }
+                $("#users").append("<div><a target=\"_blank\" href='" + link + "'>" + username + "</a></div>");
+              } else {
+                $("#users").append("<div>" + username + "</div>");
+              }
+            }
           }
-        }
-      }
-    });
+        }); // getUsers
+      }); // getLastSeen
+    }); // updatePrivateRoomStatus
   };
   setInterval(updateUserLink, conf().interval);
   updateUserLink();
@@ -360,3 +428,51 @@ function initUserCss() {
   }
 }
 
+var private_room_label_pattern = 'L_X_Y';
+var updatePrivateRoomPattern = function() {
+  var param = getParameter('private_room_label_pattern');
+  if (notEmptyString(param)) {
+    private_room_label_pattern = param;
+  }
+}
+
+var extractUsername = function(id) {
+  var r = new RegExp(privateRoomLabel(getLabel(), ['(.*)', getUsername()], false));
+  var matched = id.match(r);
+  if (matched) {
+    return matched[0];
+  }
+  r = new RegExp(privateRoomLabel(getLabel(), [getUsername(), '(.*)'], false));
+  var matched = id.match(r);
+  return matched[0];
+}
+
+var updatePrivateRoomStatus = function(callback) {
+  getPrivateRoomQuestions(function(data) {
+    var privateRoomsStatus = {};
+    for (var idx in data) {
+      var q = data[idx];
+      privateRoomsStatus[getLabelFromQuestionId(q.id)] = q.timestamp;
+    }
+    callback(privateRoomsStatus);
+  });
+}
+
+var privateRoomLabel = function(label, usernames, sort) {
+  sort = typeof sort !== 'undefined' ? sort : true;
+  if (sort) {
+    usernames.sort();
+  }
+  return private_room_label_pattern
+        .replace('L', label)
+        .replace('X', usernames[0])
+        .replace('Y', usernames[1]);
+}
+
+var getPrivateRoomQuestions = function(callback) {
+  getCustomQuestions(privateRoomLabel(getLabel(), ['*', getUsername()], false), function(questions) {
+    getCustomQuestions(privateRoomLabel(getLabel(), [getUsername(), '*'], false), function(more_questions) {
+        callback(questions.concat(more_questions));
+    });
+  });
+};

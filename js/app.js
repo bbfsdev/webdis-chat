@@ -53,6 +53,31 @@ function set_key(key, value, callback, expire) {
   });
 }
 
+function hset(key, field, value, callback) {
+  var hset_request = location.protocol + "//" + window.location.hostname + "/webdis/HSET/" + encodeURIComponent(key) + "/" + encodeURIComponent(field) + "/" + encodeURIComponent(value);
+  $.ajax({
+    cache: false,
+    url: hset_request,
+    timeout: 8000,
+    data: "format=json",
+    dataType: "json",
+    success: callback,
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+  });
+}
+
+function hget_all(key, callback) {
+  $.ajax({
+    cache: false,
+    url: location.protocol + "//" + window.location.hostname + "/webdis/HGETALL/" + encodeURIComponent(key),
+    timeout: 8000,
+    data: "format=json",
+    dataType: "json",
+    success: function(data) { callback(data.HGETALL); },
+    error: function(xhr, status, errorThrown) { handle_error(errorThrown+'\n'+status+'\n'+xhr.statusText); } 
+  });
+}
+
 function keys(pattern, callback) {
   $.ajax({
     cache: false,
