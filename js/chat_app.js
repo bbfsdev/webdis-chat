@@ -296,7 +296,9 @@ function startIntervals() {
       if (should_update) {
         getQuestions(function(questions) {
           PLUGINS.setHtmlAllQuestions(questions);
-          updateSeenQuestions(questions[questions.length-1]);
+          if (questions && questions.length > 0) {
+            updateSeenQuestions(questions[questions.length-1]);
+          }
         });
       }
     });
