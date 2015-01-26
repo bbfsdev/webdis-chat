@@ -87,10 +87,12 @@ var getUsername = function(user_id) {
 
 var updateUser = function () {
   incr(KEY_USERS_COUNT(), function(user_id) {
-    setInterval(function() {
-      var from_text = getUsername();
+    var setUserTimeout = function() {
+      var from_text = getUsername(user_id.toString());
       set_key(KEY_USER(user_id), from_text, function() {}, conf().user_count_timeout + 2);
-    }, conf().user_count_timeout * 1000);
+    };
+    setInterval(setUserTimeout, conf().user_count_timeout * 1000);
+    setUserTimeout();
   });
 }
 

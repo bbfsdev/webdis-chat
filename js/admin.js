@@ -1,14 +1,5 @@
 ISADMIN = true;
 
-
-/*function startIntervals() {    
- setInterval(function() {
-    userCount(function(count) {
-      $('#count').text(count);
-    });
-  }, conf.refresh_count);
-}*/
-
 function initAdminPage() {
   PLUGINS.setLang();
   updateUser();
@@ -20,9 +11,13 @@ function initAdminPage() {
   PLUGINS.initAskForm($("#askForm"));
   getQuestions(PLUGINS.setHtmlAllQuestions);
   bindAdminEvents();
-  userCount(function(count) {
-    $('#count').text(count);
-  });
+  var updateUserCount = function() {
+    userCount(function(count) {
+      $('#count').text(count);
+    });
+  };
+  setInterval(updateUserCount, conf().refresh_count);
+  updateUserCount();
 };
 
 function bindAdminEvents() {
