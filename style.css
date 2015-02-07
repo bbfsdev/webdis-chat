@@ -44,3 +44,7 @@
 
 #inputForAutoApproveBtn.ui-state-active { background: #6fff36; } 
 #inputForAutoApproveBtn { background: #ff3a56; } 
+
+/* User list new message blink */
+.noNewMessage {}
+.newMessage { font-weight: 900; }

@@ -389,8 +389,13 @@ function initUserListPage() {
   
           // Update links to other users
           $("#users").empty();
+          // Add each user only once.
+          var usersHash = {};
           for (var idx in users) {
             var username = users[idx];
+            if (username in usersHash) {
+              continue;
+            }
             if (username && username != "null") {
               if (link_pattern && username != getUsername()) {
                 var link_label = privateRoomLabel(getLabel(), [username, getUsername()]);
@@ -403,14 +408,17 @@ function initUserListPage() {
                 if (link_label in privateRoomsStatus) {
                   private_room_status_timestamp = parseInt(privateRoomsStatus[link_label]);
                 }
+                var messageDiv = $("#users").append("<div><a target=\"_blank\" href='" + link + "'>" + username + "</a></div>")
+                  .children().last().addClass("noNewMessage");
                 if (private_room_status_timestamp > last_seen_timestamp) {
-                  username = '<b>' + username + '</b>';
+                  messageDiv.removeClass("noNewMessage").addClass("newMessage");
+                  messageDiv.fadeOut(700).fadeIn(700);
                 }
-                $("#users").append("<div><a target=\"_blank\" href='" + link + "'>" + username + "</a></div>");
               } else {
-                $("#users").append("<div>" + username + "</div>");
+                $("#users").append("<div>" + username + "</div>").addClass("noNewMessage");
               }
             }
+            usersHash[username] = true;
           }
         }); // getUsers
       }); // getLastSeen
