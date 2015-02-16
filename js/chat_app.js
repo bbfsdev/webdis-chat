@@ -412,7 +412,7 @@ function initUserListPage() {
                   .children().last().addClass("noNewMessage");
                 if (private_room_status_timestamp > last_seen_timestamp) {
                   messageDiv.removeClass("noNewMessage").addClass("newMessage");
-                  messageDiv.fadeOut(700).fadeIn(700);
+                  messageDiv.fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
                 }
               } else {
                 $("#users").append("<div>" + username + "</div>").addClass("noNewMessage");
