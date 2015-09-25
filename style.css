@@ -3,10 +3,13 @@
 .toR{float: right;}
 .toL{float: left;}
 
-.itemQ{border-bottom: 1px solid #555; padding: 5px 10px;min-height: 30px;}
+.itemQ{border-bottom: 1px solid #555; padding: 5px 10px;min-height: 30px;word-break: break-word;}
 .itemQ:nth-child(odd){background-color: #ffeed2;}
 .nameQ{color: #d0563c;}
 .timeQ{padding: 0 5px; font-style: italic; font-size: smaller;}
+
+.fixedTop{position: fixed;top: 0; left: 0; right: 0; background-color: #FFF;}
+.contForFixedTop{margin-top: 40px;}
 
 .btns{margin: 5px 0;}
 .btns .btn{margin: 0 5px;}
