@@ -5,7 +5,7 @@ function notEmptyString(val) {
 }
 
 PLUGINS.initAskButtonAndForm = (function($btnObj, $formObj){
-  if (getParameter('static_form') != 'true') {
+  if (getParameter('static_form') != 'true' && getParameter('minimal_form') != 'true') {
     $btnObj.on('click', function(){
       $btnObj.hide();
       $formObj.show();
@@ -46,7 +46,7 @@ PLUGINS.initAskForm = (function($formObj) {
     }
     addQuestion($formObj.find('#to').val(), $formObj.find('#name').val(), $formObj.find('#from').val(), $formObj.find('#message').val(), false);
     $formObj.find('#message').val('');
-    if (getParameter('static_form') != 'true') {
+    if (getParameter('static_form') != 'true' && getParameter('minimal_form') != 'true') {
       $formObj.find('#name').val('');
       $formObj.find('#from').val('');
     }
@@ -216,13 +216,18 @@ PLUGINS.setHtmlAllQuestions = (function(data){
     return item;
   }
 
+  function replaceLinks(text) {
+    var exp = /(\b((https?|ftp|file):\/\/|www\.)[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp,"<a href='$1' target='_blank'>$1</a>");
+  }
+
   function setHtmlItemQ (q) {
     if (q.approve) {
       var item = $('<div>').addClass("itemQ");
       var itemName = $('<span>').addClass('nameQ').html(q.name);
       var itemFrom = $('<span>').addClass('fromQ').html("@"+q.from);
       var itemTime = $('<span>').addClass('timeQ').html(timeFormat(q.timestamp));
-      var itemMess = $('<div>').addClass('messageQ').html(PLUGINS.emoticons(q.question));
+      var itemMess = $('<div>').addClass('messageQ').html(PLUGINS.emoticons(replaceLinks(q.question)));
 
       item.append(itemName).append(itemFrom).append(itemTime).append(itemMess);
       $('#questionsList').prepend(item);

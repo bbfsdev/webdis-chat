@@ -331,6 +331,13 @@ function initCommon() {
   if (getParameter('auto_approve') == 'true') {
     set_key(KEY_AUTO_APPROVE(), true);
   }
+  if (getParameter('minimal_form') == 'true') {
+    $("#askForm").show();
+    $("#askBtn").hide();
+    $("#helpBtn").hide();
+    $("#cancelBtn").hide();
+    $("#name").hide();
+  }
   if (getParameter('static_form') == 'true') {
     $("#askForm").show();
     $("#askBtn").hide();
@@ -409,13 +416,13 @@ function initUserListPage() {
                   private_room_status_timestamp = parseInt(privateRoomsStatus[link_label]);
                 }
                 var messageDiv = $("#users").append("<div><a target=\"_blank\" href='" + link + "'>" + username + "</a></div>")
-                  .children().last().addClass("noNewMessage");
+                  .children().last().addClass("noNewMessage user_" + username);
                 if (private_room_status_timestamp > last_seen_timestamp) {
                   messageDiv.removeClass("noNewMessage").addClass("newMessage");
                   messageDiv.fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700).fadeOut(700).fadeIn(700);
                 }
               } else {
-                $("#users").append("<div>" + username + "</div>").addClass("noNewMessage");
+                $("#users").append("<div>" + username + "</div>").children().last().addClass("noNewMessage user_" + username);
               }
             }
             usersHash[username] = true;
