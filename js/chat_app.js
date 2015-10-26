@@ -337,6 +337,7 @@ function initCommon() {
     $("#helpBtn").hide();
     $("#cancelBtn").hide();
     $("#name").hide();
+    $("#questionsList").switchClass('contForFixedTop', 'contForFixedTopMinimal');
   }
   if (getParameter('static_form') == 'true') {
     $("#askForm").show();
